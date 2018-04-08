@@ -34,12 +34,14 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
+            "Configuration\\": "module/Configuration/src/",
             "User\\": "module/User/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "ApplicationTest\\": "module/Application/test/",
+            "ConfigurationTest\\": "module/Configuration/test/",
             "UserTest\\": "module/User/test/"
         }
     },
