@@ -1,4 +1,5 @@
 <?php
+
 namespace User\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -16,11 +17,8 @@ class PermissionControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $permissionManager = $container->get(PermissionManager::class);
-        
+
         // Instantiate the controller and inject dependencies
         return new PermissionController($entityManager, $permissionManager);
     }
 }
-
-
-

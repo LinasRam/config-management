@@ -1,4 +1,5 @@
 <?php
+
 namespace User\Service\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -14,8 +15,8 @@ use User\Service\AuthAdapter;
 class AuthenticationServiceFactory implements FactoryInterface
 {
     /**
-     * This method creates the Zend\Authentication\AuthenticationService service 
-     * and returns its instance. 
+     * This method creates the Zend\Authentication\AuthenticationService service
+     * and returns its instance.
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

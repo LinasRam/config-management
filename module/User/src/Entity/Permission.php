@@ -1,4 +1,5 @@
 <?php
+
 namespace User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -18,21 +19,21 @@ class Permission
      */
     protected $id;
 
-    /** 
-     * @ORM\Column(name="name")  
+    /**
+     * @ORM\Column(name="name")
      */
     protected $name;
-    
-    /** 
-     * @ORM\Column(name="description")  
+
+    /**
+     * @ORM\Column(name="description")
      */
     protected $description;
 
-    /** 
-     * @ORM\Column(name="date_created")  
+    /**
+     * @ORM\Column(name="date_created")
      */
     protected $dateCreated;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="User\Entity\Role")
      * @ORM\JoinTable(name="role_permission",
@@ -45,17 +46,17 @@ class Permission
     /**
      * Constructor.
      */
-    public function __construct() 
+    public function __construct()
     {
         $this->roles = new ArrayCollection();
     }
-    
-    public function getId() 
+
+    public function getId()
     {
         return $this->id;
     }
 
-    public function setId($id) 
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -64,32 +65,32 @@ class Permission
     {
         return $this->name;
     }
-    
+
     public function setName($name)
     {
         $this->name = $name;
     }
-    
+
     public function getDescription()
     {
         return $this->description;
     }
-    
+
     public function setDescription($description)
     {
         $this->description = $description;
     }
-    
+
     public function getDateCreated()
     {
         return $this->dateCreated;
     }
-    
+
     public function setDateCreated($dateCreated)
     {
         $this->dateCreated = $dateCreated;
     }
-    
+
     public function getRoles()
     {
         return $this->roles;

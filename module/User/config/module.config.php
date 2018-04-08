@@ -1,4 +1,5 @@
 <?php
+
 namespace User;
 
 use Zend\Router\Http\Literal;
@@ -11,82 +12,82 @@ return [
             'login' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/login',
+                    'route' => '/login',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action'     => 'login',
+                        'action' => 'login',
                     ],
                 ],
             ],
             'logout' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/logout',
+                    'route' => '/logout',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action'     => 'logout',
+                        'action' => 'logout',
                     ],
                 ],
             ],
             'not-authorized' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/not-authorized',
+                    'route' => '/not-authorized',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action'     => 'notAuthorized',
+                        'action' => 'notAuthorized',
                     ],
                 ],
             ],
             'reset-password' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/reset-password',
+                    'route' => '/reset-password',
                     'defaults' => [
                         'controller' => Controller\UserController::class,
-                        'action'     => 'resetPassword',
+                        'action' => 'resetPassword',
                     ],
                 ],
             ],
             'users' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/users[/:action[/:id]]',
+                    'route' => '/users[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '[a-zA-Z0-9_-]*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\UserController::class,
-                        'action'        => 'index',
+                        'controller' => Controller\UserController::class,
+                        'action' => 'index',
                     ],
                 ],
             ],
             'roles' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/roles[/:action[/:id]]',
+                    'route' => '/roles[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '[0-9]*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\RoleController::class,
-                        'action'        => 'index',
+                        'controller' => Controller\RoleController::class,
+                        'action' => 'index',
                     ],
                 ],
             ],
             'permissions' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/permissions[/:action[/:id]]',
+                    'route' => '/permissions[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '[0-9]*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\PermissionController::class,
-                        'action'        => 'index',
+                        'controller' => Controller\PermissionController::class,
+                        'action' => 'index',
                     ],
                 ],
             ],
@@ -96,8 +97,8 @@ return [
         'factories' => [
             Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
             Controller\PermissionController::class => Controller\Factory\PermissionControllerFactory::class,
-            Controller\RoleController::class => Controller\Factory\RoleControllerFactory::class,    
-            Controller\UserController::class => Controller\Factory\UserControllerFactory::class, 
+            Controller\RoleController::class => Controller\Factory\RoleControllerFactory::class,
+            Controller\UserController::class => Controller\Factory\UserControllerFactory::class,
         ],
     ],
     // We register module-provided controller plugins under this key.

@@ -1,4 +1,5 @@
 <?php
+
 namespace User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -18,18 +19,18 @@ class Role
      */
     protected $id;
 
-    /** 
-     * @ORM\Column(name="name")  
+    /**
+     * @ORM\Column(name="name")
      */
     protected $name;
-    
-    /** 
-     * @ORM\Column(name="description")  
+
+    /**
+     * @ORM\Column(name="description")
      */
     protected $description;
 
-    /** 
-     * @ORM\Column(name="date_created")  
+    /**
+     * @ORM\Column(name="date_created")
      */
     protected $dateCreated;
 
@@ -41,7 +42,7 @@ class Role
      *      )
      */
     private $parentRoles;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="User\Entity\Role")
      * @ORM\JoinTable(name="role_hierarchy",
@@ -50,7 +51,7 @@ class Role
      *      )
      */
     protected $childRoles;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="User\Entity\Permission")
      * @ORM\JoinTable(name="role_permission",
@@ -59,31 +60,31 @@ class Role
      *      )
      */
     private $permissions;
-    
+
     /**
      * Constructor.
      */
-    public function __construct() 
+    public function __construct()
     {
         $this->parentRoles = new ArrayCollection();
         $this->childRoles = new ArrayCollection();
         $this->permissions = new ArrayCollection();
     }
-    
+
     /**
      * Returns role ID.
      * @return integer
      */
-    public function getId() 
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * Sets role ID. 
-     * @param int $id    
+     * Sets role ID.
+     * @param int $id
      */
-    public function setId($id) 
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -92,42 +93,42 @@ class Role
     {
         return $this->name;
     }
-    
+
     public function setName($name)
     {
         $this->name = $name;
     }
-    
+
     public function getDescription()
     {
         return $this->description;
     }
-    
+
     public function setDescription($description)
     {
         $this->description = $description;
     }
-    
+
     public function getDateCreated()
     {
         return $this->dateCreated;
     }
-    
+
     public function setDateCreated($dateCreated)
     {
         $this->dateCreated = $dateCreated;
     }
-    
+
     public function getParentRoles()
     {
         return $this->parentRoles;
     }
-    
+
     public function getChildRoles()
     {
         return $this->childRoles;
     }
-    
+
     public function getPermissions()
     {
         return $this->permissions;
