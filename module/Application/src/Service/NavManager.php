@@ -70,12 +70,16 @@ class NavManager
                 'float' => 'right'
             ];
         } else {
+            $items[] = [
+                'id' => 'application_management',
+                'label' => 'Application management',
+                'link' => $url('applications')
+            ];
 
-            // Determine which items must be displayed in Admin dropdown.
-            $adminDropdownItems = [];
+            $userDropdownItems = [];
 
             if ($this->rbacManager->isGranted(null, 'user.manage')) {
-                $adminDropdownItems[] = [
+                $userDropdownItems[] = [
                     'id' => 'users',
                     'label' => 'Manage Users',
                     'link' => $url('users')
@@ -83,7 +87,7 @@ class NavManager
             }
 
             if ($this->rbacManager->isGranted(null, 'permission.manage')) {
-                $adminDropdownItems[] = [
+                $userDropdownItems[] = [
                     'id' => 'permissions',
                     'label' => 'Manage Permissions',
                     'link' => $url('permissions')
@@ -91,18 +95,18 @@ class NavManager
             }
 
             if ($this->rbacManager->isGranted(null, 'role.manage')) {
-                $adminDropdownItems[] = [
+                $userDropdownItems[] = [
                     'id' => 'roles',
                     'label' => 'Manage Roles',
                     'link' => $url('roles')
                 ];
             }
 
-            if (count($adminDropdownItems) != 0) {
+            if (count($userDropdownItems) != 0) {
                 $items[] = [
-                    'id' => 'admin',
-                    'label' => 'Admin',
-                    'dropdown' => $adminDropdownItems
+                    'id' => 'user_management',
+                    'label' => 'User management',
+                    'dropdown' => $userDropdownItems
                 ];
             }
 

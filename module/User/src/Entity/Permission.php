@@ -14,8 +14,8 @@ class Permission
 {
     /**
      * @ORM\Id
-     * @ORM\Column(name="id")
-     * @ORM\GeneratedValue
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -35,11 +35,7 @@ class Permission
     protected $dateCreated;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User\Entity\Role")
-     * @ORM\JoinTable(name="role_permission",
-     *      joinColumns={@ORM\JoinColumn(name="permission_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
-     *      )
+     * @ORM\ManyToMany(targetEntity="User\Entity\Role", mappedBy="permissions")
      */
     private $roles;
 

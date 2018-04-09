@@ -18,8 +18,8 @@ class User
 
     /**
      * @ORM\Id
-     * @ORM\Column(name="id")
-     * @ORM\GeneratedValue
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -49,12 +49,12 @@ class User
     protected $dateCreated;
 
     /**
-     * @ORM\Column(name="pwd_reset_token")
+     * @ORM\Column(name="pwd_reset_token", nullable=true)
      */
     protected $passwordResetToken;
 
     /**
-     * @ORM\Column(name="pwd_reset_token_creation_date")
+     * @ORM\Column(name="pwd_reset_token_creation_date", nullable=true)
      */
     protected $passwordResetTokenCreationDate;
 
