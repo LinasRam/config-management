@@ -4,7 +4,6 @@ namespace User\Service;
 
 use Doctrine\ORM\EntityManager;
 use User\Entity\Permission;
-use User\Service\RbacManager;
 
 /**
  * This service is responsible for adding/editing permissions.
@@ -110,6 +109,7 @@ class PermissionManager
             'role.manage' => 'Manage roles',
             'profile.any.view' => 'View anyone\'s profile',
             'profile.own.view' => 'View own profile',
+            'application.manage' => 'Manage applications',
         ];
 
         foreach ($defaultPermissions as $name => $description) {

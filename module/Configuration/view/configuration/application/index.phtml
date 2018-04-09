@@ -1,3 +1,68 @@
-<strong>Module:</strong>        Configuration &raquo;
-<strong>Controller:</strong>    Application &raquo;
-<strong>Action:</strong>        index
+<?php
+$this->headTitle('Applications');
+
+$this->mainMenu()->setActiveItemId('applications');
+
+$this->pageBreadcrumbs()->setItems([
+    'Home' => $this->url('home'),
+    'Manage Applications' => $this->url('applications'),
+]);
+?>
+
+<h1>Manage Applications</h1>
+
+<?= $this->flashMessenger()->render('error', ['alert', 'alert-warning']); ?>
+<?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>
+<?= $this->flashMessenger()->render('info', ['alert', 'alert-info']); ?>
+
+<p>
+    <a class="btn btn-default" href="
+    <?= $this->url('applications', ['action' => 'add']); ?>">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Application
+    </a>
+</p>
+
+<table class="table table-striped">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Date Created</th>
+        <th>Actions</th>
+    </tr>
+
+    <?php /** @var \Configuration\Entity\Application $application */
+    foreach ($applications as $application): ?>
+
+        <tr>
+            <td><?= $this->escapeHtml($application->getId()); ?></td>
+            <td>
+                <a href="<?= $this->url('applications', ['action' => 'view', 'id' => $application->getId()]); ?>">
+                    <?= $this->escapeHtml($application->getName()); ?>
+                </a>
+            </td>
+            <td><?= $this->escapeHtml($application->getDescription()); ?></a>
+            </td>
+            <td>
+                <nobr><?= $this->escapeHtml($application->getDateCreated()); ?></nobr>
+            </td>
+            <td>
+                <nobr>
+                    <a class="btn btn-info" href="<?= $this->url('applications',
+                        ['action' => 'edit', 'id' => $application->getId()]); ?>">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </a>
+                    <a class="btn btn-danger" href="<?= $this->url('applications',
+                        ['action' => 'delete', 'id' => $application->getId()]); ?>">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </a>
+                </nobr>
+            </td>
+        </tr>
+
+    <?php endforeach; ?>
+
+</table>
+
+

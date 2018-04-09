@@ -115,6 +115,7 @@ class RoleManager
                     'role.manage',
                     'permission.manage',
                     'profile.any.view',
+                    'application.manage',
                 ],
             ],
             'Guest' => [

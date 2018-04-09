@@ -70,11 +70,13 @@ class NavManager
                 'float' => 'right'
             ];
         } else {
-            $items[] = [
-                'id' => 'application_management',
-                'label' => 'Application management',
-                'link' => $url('applications')
-            ];
+            if ($this->rbacManager->isGranted(null, 'application.manage')) {
+                $items[] = [
+                    'id' => 'applications',
+                    'label' => 'Application management',
+                    'link' => $url('applications')
+                ];
+            }
 
             $userDropdownItems = [];
 

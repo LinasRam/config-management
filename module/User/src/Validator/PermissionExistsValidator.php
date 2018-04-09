@@ -29,7 +29,7 @@ class PermissionExistsValidator extends AbstractValidator
      * @var array
      */
     protected $messageTemplates = array(
-        self::NOT_SCALAR => "The email must be a scalar value",
+        self::NOT_SCALAR => "Name must be a scalar value",
         self::PERMISSION_EXISTS => "Another permission with such name already exists"
     );
 

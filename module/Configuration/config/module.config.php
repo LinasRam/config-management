@@ -2,14 +2,14 @@
 
 namespace Configuration;
 
+use Configuration\Controller\Factory\ApplicationControllerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Zend\Router\Http\Segment;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'controllers' => [
         'factories' => [
-            Controller\ApplicationController::class => InvokableFactory::class,
+            Controller\ApplicationController::class => ApplicationControllerFactory::class,
         ],
     ],
     'router' => [
@@ -33,9 +33,14 @@ return [
     'access_filter' => [
         'controllers' => [
             Controller\ApplicationController::class => [
-                ['actions' => ['index'], 'allow' => '@'],
+                ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+application.manage'],
             ],
         ]
+    ],
+    'service_manager' => [
+        'factories' => [
+            Service\ApplicationManager::class => Service\Factory\ApplicationManagerFactory::class,
+        ],
     ],
     'view_manager' => [
         'template_path_stack' => [
