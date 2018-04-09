@@ -3,6 +3,7 @@
 namespace Configuration;
 
 use Configuration\Controller\Factory\ApplicationControllerFactory;
+use Configuration\Controller\Factory\EnvironmentControllerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Zend\Router\Http\Segment;
 
@@ -10,6 +11,7 @@ return [
     'controllers' => [
         'factories' => [
             Controller\ApplicationController::class => ApplicationControllerFactory::class,
+            Controller\EnvironmentController::class => EnvironmentControllerFactory::class,
         ],
     ],
     'router' => [
@@ -28,6 +30,20 @@ return [
                     ],
                 ],
             ],
+            'environments' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/environments[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+'
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\EnvironmentController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'access_filter' => [
@@ -35,11 +51,15 @@ return [
             Controller\ApplicationController::class => [
                 ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+application.manage'],
             ],
+            Controller\EnvironmentController::class => [
+                ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+environment.manage'],
+            ],
         ]
     ],
     'service_manager' => [
         'factories' => [
             Service\ApplicationManager::class => Service\Factory\ApplicationManagerFactory::class,
+            Service\EnvironmentManager::class => Service\Factory\EnvironmentManagerFactory::class,
         ],
     ],
     'view_manager' => [

@@ -3,6 +3,7 @@
 namespace Configuration\Service;
 
 use Configuration\Entity\Application;
+use Configuration\Entity\Environment;
 use Configuration\Form\ApplicationForm;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -74,9 +75,32 @@ class ApplicationManager
         $application->setName($data['name']);
         $application->setDescription($data['description']);
 
+        $this->assignEnvironments($application, $data['environments']);
+
         $this->entityManager->persist($application);
 
         $this->entityManager->flush();
+    }
+
+    /**
+     * @param Application $application
+     * @param array $environmentIds
+     * @throws Exception
+     */
+    private function assignEnvironments(Application $application, array $environmentIds)
+    {
+        $application->getEnvironments()->clear();
+
+        foreach ($environmentIds as $environmentId) {
+            /** @var Environment $environment */
+            $environment = $this->entityManager->getRepository(Environment::class)
+                ->find($environmentId);
+            if ($environment == null) {
+                throw new Exception('Not found environment by ID');
+            }
+
+            $application->addEnvironment($environment);
+        }
     }
 
     /**

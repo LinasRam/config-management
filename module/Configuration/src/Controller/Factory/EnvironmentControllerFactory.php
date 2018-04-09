@@ -2,8 +2,7 @@
 
 namespace Configuration\Controller\Factory;
 
-use Configuration\Controller\ApplicationController;
-use Configuration\Service\ApplicationManager;
+use Configuration\Controller\EnvironmentController;
 use Configuration\Service\EnvironmentManager;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -11,7 +10,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ApplicationControllerFactory implements FactoryInterface
+class EnvironmentControllerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -19,7 +18,7 @@ class ApplicationControllerFactory implements FactoryInterface
      * @param  ContainerInterface $container
      * @param  string $requestedName
      * @param  null|array $options
-     * @return ApplicationController
+     * @return EnvironmentController
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      *     creating a service.
@@ -27,9 +26,8 @@ class ApplicationControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $applicationManager = $container->get(ApplicationManager::class);
-        $environmentManager = $container->get(EnvironmentManager::class);
+        $applicationManager = $container->get(EnvironmentManager::class);
 
-        return new ApplicationController($applicationManager, $environmentManager);
+        return new EnvironmentController($applicationManager);
     }
 }

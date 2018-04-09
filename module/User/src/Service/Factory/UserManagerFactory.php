@@ -2,6 +2,7 @@
 
 namespace User\Service\Factory;
 
+use Configuration\Service\EnvironmentManager;
 use Interop\Container\ContainerInterface;
 use User\Service\UserManager;
 use User\Service\RoleManager;
@@ -21,7 +22,8 @@ class UserManagerFactory
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $roleManager = $container->get(RoleManager::class);
         $permissionManager = $container->get(PermissionManager::class);
+        $environmentManager = $container->get(EnvironmentManager::class);
 
-        return new UserManager($entityManager, $roleManager, $permissionManager);
+        return new UserManager($entityManager, $roleManager, $permissionManager, $environmentManager);
     }
 }

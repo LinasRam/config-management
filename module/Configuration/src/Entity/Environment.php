@@ -2,14 +2,13 @@
 
 namespace Configuration\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="application")
+ * @ORM\Table(name="environment")
  */
-class Application
+class Environment
 {
     /**
      * @var int
@@ -40,25 +39,6 @@ class Application
      * @ORM\Column(name="date_created")
      */
     protected $dateCreated;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="Configuration\Entity\Environment")
-     * @ORM\JoinTable(name="application_environment",
-     *      joinColumns={@ORM\JoinColumn(name="application_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="environment_id", referencedColumnName="id")}
-     *      )
-     */
-    protected $environments;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->environments = new ArrayCollection();
-    }
 
     /**
      * @return int
@@ -122,21 +102,5 @@ class Application
     public function setDateCreated(string $dateCreated)
     {
         $this->dateCreated = $dateCreated;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getEnvironments()
-    {
-        return $this->environments;
-    }
-
-    /**
-     * @param Environment $environment
-     */
-    public function addEnvironment(Environment $environment)
-    {
-        $this->environments->add($environment);
     }
 }

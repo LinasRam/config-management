@@ -1,0 +1,68 @@
+<?php
+$this->headTitle('Environments');
+
+$this->mainMenu()->setActiveItemId('environments');
+
+$this->pageBreadcrumbs()->setItems([
+    'Home' => $this->url('home'),
+    'Manage Environments' => $this->url('environments'),
+]);
+?>
+
+<h1>Manage Environments</h1>
+
+<?= $this->flashMessenger()->render('error', ['alert', 'alert-warning']); ?>
+<?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>
+<?= $this->flashMessenger()->render('info', ['alert', 'alert-info']); ?>
+
+<p>
+    <a class="btn btn-default" href="
+    <?= $this->url('environments', ['action' => 'add']); ?>">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Environment
+    </a>
+</p>
+
+<table class="table table-striped">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Date Created</th>
+        <th>Actions</th>
+    </tr>
+
+    <?php /** @var \Configuration\Entity\Environment $environment */
+    foreach ($environments as $environment): ?>
+
+        <tr>
+            <td><?= $this->escapeHtml($environment->getId()); ?></td>
+            <td>
+                <a href="<?= $this->url('environments', ['action' => 'view', 'id' => $environment->getId()]); ?>">
+                    <?= $this->escapeHtml($environment->getName()); ?>
+                </a>
+            </td>
+            <td><?= $this->escapeHtml($environment->getDescription()); ?></a>
+            </td>
+            <td>
+                <nobr><?= $this->escapeHtml($environment->getDateCreated()); ?></nobr>
+            </td>
+            <td>
+                <nobr>
+                    <a class="btn btn-info" href="<?= $this->url('environments',
+                        ['action' => 'edit', 'id' => $environment->getId()]); ?>">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </a>
+                    <a class="btn btn-danger" href="<?= $this->url('environments',
+                        ['action' => 'delete', 'id' => $environment->getId()]); ?>">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </a>
+                </nobr>
+            </td>
+        </tr>
+
+    <?php endforeach; ?>
+
+</table>
+
+

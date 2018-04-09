@@ -2,14 +2,13 @@
 
 namespace Configuration\Form;
 
-use Configuration\Entity\Application;
+use Configuration\Entity\Environment;
 use Configuration\Validator\EntityByNameExistsValidator;
 use Doctrine\ORM\EntityManager;
 use Zend\Form\Form;
-use Zend\InputFilter\ArrayInput;
 use Zend\InputFilter\InputFilter;
 
-class ApplicationForm extends Form
+class EnvironmentForm extends Form
 {
     /**
      * @var EntityManager
@@ -17,21 +16,21 @@ class ApplicationForm extends Form
     private $entityManager;
 
     /**
-     * @var Application
+     * @var Environment
      */
-    private $application;
+    private $environment;
 
     /**
      * ApplicationForm constructor.
      * @param EntityManager $entityManager
-     * @param Application|null $application
+     * @param Environment|null $environment
      */
-    public function __construct(EntityManager $entityManager, Application $application = null)
+    public function __construct(EntityManager $entityManager, Environment $environment = null)
     {
-        parent::__construct('application-form');
+        parent::__construct('environment-form');
 
         $this->entityManager = $entityManager;
-        $this->application = $application;
+        $this->environment = $environment;
 
         $this->setAttribute('method', 'post');
 
@@ -48,7 +47,7 @@ class ApplicationForm extends Form
                 'id' => 'name'
             ],
             'options' => [
-                'label' => 'Application Name',
+                'label' => 'Environment Name',
             ],
         ]);
 
@@ -60,17 +59,6 @@ class ApplicationForm extends Form
             ],
             'options' => [
                 'label' => 'Description',
-            ],
-        ]);
-
-        $this->add([
-            'type' => 'select',
-            'name' => 'environments',
-            'attributes' => [
-                'multiple' => 'multiple',
-            ],
-            'options' => [
-                'label' => 'Environment(s)',
             ],
         ]);
 
@@ -117,8 +105,8 @@ class ApplicationForm extends Form
                     'name' => EntityByNameExistsValidator::class,
                     'options' => [
                         'entityManager' => $this->entityManager,
-                        'entity' => $this->application,
-                        'entityClass' => Application::class,
+                        'entity' => $this->environment,
+                        'entityClass' => Environment::class,
                     ],
                 ],
             ],
@@ -138,18 +126,6 @@ class ApplicationForm extends Form
                         'max' => 1024
                     ],
                 ],
-            ],
-        ]);
-
-        $inputFilter->add([
-            'class' => ArrayInput::class,
-            'name' => 'environments',
-            'required' => true,
-            'filters' => [
-                ['name' => 'ToInt'],
-            ],
-            'validators' => [
-                ['name' => 'GreaterThan', 'options' => ['min' => 0]]
             ],
         ]);
     }

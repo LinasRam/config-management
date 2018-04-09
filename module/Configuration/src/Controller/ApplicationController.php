@@ -2,7 +2,9 @@
 
 namespace Configuration\Controller;
 
+use Configuration\Entity\Environment;
 use Configuration\Service\ApplicationManager;
+use Configuration\Service\EnvironmentManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -14,12 +16,19 @@ class ApplicationController extends AbstractActionController
     private $applicationManager;
 
     /**
+     * @var EnvironmentManager
+     */
+    private $environmentManager;
+
+    /**
      * ApplicationController constructor.
      * @param ApplicationManager $applicationManager
+     * @param EnvironmentManager $environmentManager
      */
-    public function __construct(ApplicationManager $applicationManager)
+    public function __construct(ApplicationManager $applicationManager, EnvironmentManager $environmentManager)
     {
         $this->applicationManager = $applicationManager;
+        $this->environmentManager = $environmentManager;
     }
 
     public function indexAction()
@@ -52,6 +61,9 @@ class ApplicationController extends AbstractActionController
     public function addAction()
     {
         $form = $this->applicationManager->getApplicationForm();
+
+        $environmentList = $this->environmentManager->getAllEnvironmentsFormattedList();
+        $form->get('environments')->setValueOptions($environmentList);
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
@@ -91,6 +103,9 @@ class ApplicationController extends AbstractActionController
 
         $form = $this->applicationManager->getApplicationForm($application);
 
+        $environmentList = $this->environmentManager->getAllEnvironmentsFormattedList();
+        $form->get('environments')->setValueOptions($environmentList);
+
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
 
@@ -106,9 +121,16 @@ class ApplicationController extends AbstractActionController
                 return $this->redirect()->toRoute('applications', ['action' => 'index']);
             }
         } else {
+            $environmentIds = [];
+            /** @var Environment $environment */
+            foreach ($application->getEnvironments() as $environment) {
+                $environmentIds[] = $environment->getId();
+            }
+
             $form->setData(array(
                 'name' => $application->getName(),
-                'description' => $application->getDescription()
+                'description' => $application->getDescription(),
+                'environments' => $environmentIds,
             ));
         }
 

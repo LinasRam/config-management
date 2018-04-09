@@ -2,6 +2,7 @@
 
 namespace User\Service;
 
+use Configuration\Service\EnvironmentManager;
 use Doctrine\ORM\EntityManager;
 use User\Entity\User;
 use User\Entity\Role;
@@ -33,13 +34,20 @@ class UserManager
     private $permissionManager;
 
     /**
+     * Environment manager.
+     * @var EnvironmentManager
+     */
+    private $environmentManager;
+
+    /**
      * Constructs the service.
      */
-    public function __construct($entityManager, $roleManager, $permissionManager)
+    public function __construct($entityManager, $roleManager, $permissionManager, $environmentManager)
     {
         $this->entityManager = $entityManager;
         $this->roleManager = $roleManager;
         $this->permissionManager = $permissionManager;
+        $this->environmentManager = $environmentManager;
     }
 
     /**
@@ -133,6 +141,7 @@ class UserManager
 
             $this->permissionManager->createDefaultPermissionsIfNotExist();
             $this->roleManager->createDefaultRolesIfNotExist();
+            $this->environmentManager->createDefaultEnvironmentsIfNotExist();
 
             $user = new User();
             $user->setEmail('admin@example.com');

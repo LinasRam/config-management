@@ -1,12 +1,12 @@
 <?php
-$this->headTitle('Add Application');
+$this->headTitle('Add Environment');
 
-$this->mainMenu()->setActiveItemId('applications');
+$this->mainMenu()->setActiveItemId('environments');
 
 $this->pageBreadcrumbs()->setItems([
     'Home' => $this->url('home'),
-    'Manage Applications' => $this->url('applications'),
-    'Add Application' => $this->url('applications', ['action' => 'add'])
+    'Manage Environments' => $this->url('environments'),
+    'Add Environment' => $this->url('environments', ['action' => 'add'])
 ]);
 
 $form->get('name')->setAttributes([
@@ -19,16 +19,12 @@ $form->get('description')->setAttributes([
     'placeholder' => 'Enter description'
 ]);
 
-$form->get('environments')->setAttributes([
-    'class' => 'form-control'
-]);
-
 $form->get('submit')->setAttributes(['class' => 'btn btn-primary']);
 
 $form->prepare();
 ?>
 
-<h1>Add Application</h1>
+<h1>Add Environment</h1>
 
 <p>
     Please fill out the following form and click the <i>Create</i> button.
@@ -48,12 +44,6 @@ $form->prepare();
             <?= $this->formLabel($form->get('description')); ?>
             <?= $this->formElement($form->get('description')); ?>
             <?= $this->formElementErrors($form->get('description')); ?>
-        </div>
-
-        <div class="form-group">
-            <?= $this->formLabel($form->get('environments')); ?>
-            <?= $this->formElement($form->get('environments')); ?>
-            <?= $this->formElementErrors($form->get('environments')); ?>
         </div>
 
         <?= $this->formElement($form->get('csrf')); ?>

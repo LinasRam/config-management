@@ -110,6 +110,7 @@ class PermissionManager
             'profile.any.view' => 'View anyone\'s profile',
             'profile.own.view' => 'View own profile',
             'application.manage' => 'Manage applications',
+            'environment.manage' => 'Manage application environments',
         ];
 
         foreach ($defaultPermissions as $name => $description) {

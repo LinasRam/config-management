@@ -4,24 +4,28 @@ $this->headTitle('Edit Application');
 $this->mainMenu()->setActiveItemId('applications');
 
 $this->pageBreadcrumbs()->setItems([
-            'Home'=>$this->url('home'),
-            'Manage Application'=>$this->url('applications'),
-            'Edit Application'=>$this->url('applications', ['action'=>'edit', 'id'=>$application->getId()])
-            ]);
+    'Home' => $this->url('home'),
+    'Manage Application' => $this->url('applications'),
+    'Edit Application' => $this->url('applications', ['action' => 'edit', 'id' => $application->getId()])
+]);
 
 $form->get('name')->setAttributes([
-    'class'=>'form-control', 
-    'placeholder'=>'Enter name'
-    ]);
+    'class' => 'form-control',
+    'placeholder' => 'Enter name'
+]);
 
 $form->get('description')->setAttributes([
-    'class'=>'form-control', 
-    'placeholder'=>'Enter description'
-    ]);
+    'class' => 'form-control',
+    'placeholder' => 'Enter description'
+]);
+
+$form->get('environments')->setAttributes([
+    'class' => 'form-control'
+]);
 
 $form->get('submit')
-        ->setAttributes(['class'=>'btn btn-primary'])
-        ->setValue('Save');
+    ->setAttributes(['class' => 'btn btn-primary'])
+    ->setValue('Save');
 
 $form->prepare();
 ?>
@@ -31,24 +35,30 @@ $form->prepare();
 <div class="row">
     <div class="col-md-6">
         <?= $this->form()->openTag($form); ?>
-        
+
         <div class="form-group">
             <?= $this->formLabel($form->get('name')); ?>
             <?= $this->formElement($form->get('name')); ?>
-            <?= $this->formElementErrors($form->get('name')); ?>                  
+            <?= $this->formElementErrors($form->get('name')); ?>
         </div>
-        
+
         <div class="form-group">
             <?= $this->formLabel($form->get('description')); ?>
             <?= $this->formElement($form->get('description')); ?>
-            <?= $this->formElementErrors($form->get('description')); ?>                  
+            <?= $this->formElementErrors($form->get('description')); ?>
         </div>
-        
+
+        <div class="form-group">
+            <?= $this->formLabel($form->get('environments')); ?>
+            <?= $this->formElement($form->get('environments')); ?>
+            <?= $this->formElementErrors($form->get('environments')); ?>
+        </div>
+
         <?= $this->formElement($form->get('csrf')); ?>
-        
+
         <?= $this->formElement($form->get('submit')); ?>
-        
+
         <?= $this->form()->closeTag(); ?>
-    </div>    
+    </div>
 </div>   
 

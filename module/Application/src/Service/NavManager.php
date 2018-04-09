@@ -78,6 +78,14 @@ class NavManager
                 ];
             }
 
+            if ($this->rbacManager->isGranted(null, 'environment.manage')) {
+                $items[] = [
+                    'id' => 'environments',
+                    'label' => 'Environment management',
+                    'link' => $url('environments')
+                ];
+            }
+
             $userDropdownItems = [];
 
             if ($this->rbacManager->isGranted(null, 'user.manage')) {

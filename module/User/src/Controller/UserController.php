@@ -184,7 +184,6 @@ class UserController extends AbstractActionController
                     ['action' => 'view', 'id' => $user->getId()]);
             }
         } else {
-
             $userRoleIds = [];
             foreach ($user->getRoles() as $role) {
                 $userRoleIds[] = $role->getId();
