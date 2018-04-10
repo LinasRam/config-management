@@ -3,6 +3,7 @@
 namespace Configuration\Service;
 
 use Configuration\Entity\Application;
+use Configuration\Entity\ConfigurationGroup;
 use Configuration\Entity\Environment;
 use Configuration\Form\ApplicationForm;
 use Doctrine\ORM\EntityManager;
@@ -76,6 +77,7 @@ class ApplicationManager
         $application->setDescription($data['description']);
 
         $this->assignEnvironments($application, $data['environments']);
+        $this->createRootGroups($application, $data['environments']);
 
         $this->entityManager->persist($application);
 
@@ -100,6 +102,34 @@ class ApplicationManager
             }
 
             $application->addEnvironment($environment);
+        }
+    }
+
+    public function createRootGroups(Application $application, array $environmentIds)
+    {
+        $existingEnvironmentIds = [];
+        /** @var Environment $existingEnvironment */
+        foreach ($application->getEnvironments() as $existingEnvironment) {
+            $existingEnvironmentIds[] = $existingEnvironment->getId();
+        }
+
+        foreach ($environmentIds as $environmentId) {
+            if (!in_array($environmentId, $existingEnvironmentIds)) {
+                /** @var Environment $environment */
+                $environment = $this->entityManager->getRepository(Environment::class)
+                    ->find($environmentId);
+                if ($environment == null) {
+                    throw new Exception('Not found environment by ID');
+                }
+
+                $configurationGroup = new ConfigurationGroup();
+                $configurationGroup->setApplication($application);
+                $configurationGroup->setEnvironment($environment);
+                $configurationGroup->setName($application->getName() . ' ' . $environment->getName());
+                $configurationGroup->setIsRoot(true);
+
+                $this->entityManager->persist($configurationGroup);
+            }
         }
     }
 

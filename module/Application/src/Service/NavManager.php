@@ -86,6 +86,12 @@ class NavManager
                 ];
             }
 
+            $items[] = [
+                'id' => 'configurations',
+                'label' => 'Configuration management',
+                'link' => $url('configurations')
+            ];
+
             $userDropdownItems = [];
 
             if ($this->rbacManager->isGranted(null, 'user.manage')) {

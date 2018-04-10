@@ -1,0 +1,46 @@
+<?php
+$this->headTitle('Configurations');
+
+$this->mainMenu()->setActiveItemId('configurations');
+
+$this->pageBreadcrumbs()->setItems([
+    'Home' => $this->url('home'),
+    'Manage Configurations' => $this->url('configurations'),
+]);
+?>
+
+<h1>Manage Configurations</h1>
+
+<?= $this->flashMessenger()->render('error', ['alert', 'alert-warning']); ?>
+<?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>
+<?= $this->flashMessenger()->render('info', ['alert', 'alert-info']); ?>
+
+<table class="table table-striped">
+
+    <tr>
+        <th>Application name</th>
+        <th>Environment</th>
+        <th>Actions</th>
+    </tr>
+
+    <?php /** @var \Configuration\Entity\ConfigurationGroup $configurationGroup */
+    foreach ($configurationGroups as $configurationGroup): ?>
+
+        <tr>
+            <td><?= $this->escapeHtml($configurationGroup->getApplication()->getName()); ?></td>
+            <td><?= $this->escapeHtml($configurationGroup->getEnvironment()->getName()); ?></td>
+            <td>
+                <nobr>
+                    <a class="btn btn-info" href="<?= $this->url('configurations',
+                        ['action' => 'list', 'id' => $configurationGroup->getId()]); ?>">
+                        <span class="glyphicon glyphicon-pencil"></span> Manage
+                    </a>
+                </nobr>
+            </td>
+        </tr>
+
+    <?php endforeach; ?>
+
+</table>
+
+

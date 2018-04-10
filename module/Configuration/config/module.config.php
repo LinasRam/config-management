@@ -3,6 +3,7 @@
 namespace Configuration;
 
 use Configuration\Controller\Factory\ApplicationControllerFactory;
+use Configuration\Controller\Factory\ConfigurationControllerFactory;
 use Configuration\Controller\Factory\EnvironmentControllerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Zend\Router\Http\Segment;
@@ -12,6 +13,7 @@ return [
         'factories' => [
             Controller\ApplicationController::class => ApplicationControllerFactory::class,
             Controller\EnvironmentController::class => EnvironmentControllerFactory::class,
+            Controller\ConfigurationController::class => ConfigurationControllerFactory::class,
         ],
     ],
     'router' => [
@@ -44,6 +46,20 @@ return [
                     ],
                 ],
             ],
+            'configurations' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/configurations[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+'
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\ConfigurationController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'access_filter' => [
@@ -54,12 +70,16 @@ return [
             Controller\EnvironmentController::class => [
                 ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+environment.manage'],
             ],
+            Controller\ConfigurationController::class => [
+                ['actions' => ['index', 'list'], 'allow' => '@'],
+            ],
         ]
     ],
     'service_manager' => [
         'factories' => [
             Service\ApplicationManager::class => Service\Factory\ApplicationManagerFactory::class,
             Service\EnvironmentManager::class => Service\Factory\EnvironmentManagerFactory::class,
+            Service\ConfigurationManager::class => Service\Factory\ConfigurationManagerFactory::class,
         ],
     ],
     'view_manager' => [
