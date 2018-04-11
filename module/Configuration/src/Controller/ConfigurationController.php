@@ -2,6 +2,7 @@
 
 namespace Configuration\Controller;
 
+use Configuration\Form\ConfigurationForm;
 use Configuration\Service\ConfigurationManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -44,8 +45,17 @@ class ConfigurationController extends AbstractActionController
             return;
         }
 
+        $title = $configurationGroup->getApplication()->getName()
+            . '/' . $configurationGroup->getEnvironment()->getName();
+
         return new ViewModel([
-            'configurationGroup' => $configurationGroup
+            'title' => $title,
+            'parentGroups' => array_reverse(
+                $this->configurationManager->getParentGroupsRecursively($configurationGroup),
+                true
+            ),
+            'configurationGroup' => $configurationGroup,
+            'configurationForm' => new ConfigurationForm(),
         ]);
     }
 }

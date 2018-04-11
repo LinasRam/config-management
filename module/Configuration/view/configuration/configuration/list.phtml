@@ -3,15 +3,20 @@ $this->headTitle('Configurations');
 
 $this->mainMenu()->setActiveItemId('configurations');
 
-$breadcrumbs = [
+$breadcrumbValues = [
     'Home' => $this->url('home'),
     'Manage Configurations' => $this->url('configurations'),
 ];
+foreach ($parentGroups as $id => $parentGroup) {
+    $breadcrumbValues[$parentGroup] = $this->url('configurations', ['action' => 'list', 'id' => $id]);
+}
+$breadcrumbValues[$configurationGroup->getName()]
+    = $this->url('configurations', ['action' => 'list', 'id' => $configurationGroup->getId()]);
 
-$this->pageBreadcrumbs()->setItems($breadcrumbs);
+$this->pageBreadcrumbs()->setItems($breadcrumbValues);
 ?>
 
-<h1>Manage Configurations</h1>
+<h1><?= $this->escapeHtml($title); ?></h1>
 
 <?= $this->flashMessenger()->render('error', ['alert', 'alert-warning']); ?>
 <?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>

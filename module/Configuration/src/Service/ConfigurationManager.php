@@ -50,4 +50,15 @@ class ConfigurationManager
 
         return $configurationGroup;
     }
+
+    public function getParentGroupsRecursively(ConfigurationGroup $configurationGroup, array $parentGroups = []): array
+    {
+        /** @var ConfigurationGroup $parentGroup */
+        if ($parentGroup = $configurationGroup->getParentGroups()->first()) {
+            $parentGroups[$parentGroup->getId()] = $parentGroup->getName();
+            $parentGroups = $this->getParentGroupsRecursively($parentGroup, $parentGroups);
+        }
+
+        return $parentGroups;
+    }
 }

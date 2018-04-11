@@ -76,8 +76,8 @@ class ApplicationManager
         $application->setName($data['name']);
         $application->setDescription($data['description']);
 
-        $this->assignEnvironments($application, $data['environments']);
         $this->createRootGroups($application, $data['environments']);
+        $this->assignEnvironments($application, $data['environments']);
 
         $this->entityManager->persist($application);
 
