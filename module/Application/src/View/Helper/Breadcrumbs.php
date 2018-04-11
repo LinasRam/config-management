@@ -81,7 +81,7 @@ class Breadcrumbs extends AbstractHelper
     {
         $escapeHtml = $this->getView()->plugin('escapeHtml');
 
-        $result = $isActive ? '<li class="active">' : '<li>';
+        $result = $isActive ? '<li class="breadcrumb-item active">' : '<li class="breadcrumb-item">';
 
         if (!$isActive) {
             $result .= '<a href="' . $escapeHtml($link) . '">' . $escapeHtml($label) . '</a>';

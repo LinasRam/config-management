@@ -48,18 +48,6 @@ class NavManager
         $url = $this->urlHelper;
         $items = [];
 
-        $items[] = [
-            'id' => 'home',
-            'label' => 'Home',
-            'link' => $url('home')
-        ];
-
-        $items[] = [
-            'id' => 'about',
-            'label' => 'About',
-            'link' => $url('about')
-        ];
-
         // Display "Login" menu item for not authorized user only. On the other hand,
         // display "Admin" and "Logout" menu items only for authorized users.
         if (!$this->authService->hasIdentity()) {
