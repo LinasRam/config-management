@@ -3,25 +3,60 @@ $this->headTitle('Configurations');
 
 $this->mainMenu()->setActiveItemId('configurations');
 
-$breadcrumbValues = [
+$breadcrumbs = [
     'Home' => $this->url('home'),
     'Manage Configurations' => $this->url('configurations'),
+    $title => '#',
 ];
-foreach ($parentGroups as $id => $parentGroup) {
-    $breadcrumbValues[$parentGroup] = $this->url('configurations', ['action' => 'list', 'id' => $id]);
-}
-$breadcrumbValues[$configurationGroup->getName()]
-    = $this->url('configurations', ['action' => 'list', 'id' => $configurationGroup->getId()]);
+$this->pageBreadcrumbs()->setItems($breadcrumbs);
 
-$this->pageBreadcrumbs()->setItems($breadcrumbValues);
+$configurationBreadcrumbs = [];
+foreach ($parentGroups as $id => $parentGroup) {
+    $configurationBreadcrumbs[$parentGroup] = $this->url('configurations', ['action' => 'list', 'id' => $id]);
+}
+$configurationBreadcrumbs[$configurationGroup->getName()] = $this->url(
+    'configurations',
+    ['action' => 'list', 'id' => $configurationGroup->getId()]
+);
+$this->configBreadcrumbs()->setItems($configurationBreadcrumbs);
+
+$configurationForm->setAttribute('action', $this->url('configurations', ['action' => 'add']));
+$configurationForm->get('key')->setAttributes([
+    'class' => 'form-control',
+    'placeholder' => 'Enter Key'
+]);
+$configurationForm->get('value')->setAttributes([
+    'class' => 'form-control',
+    'placeholder' => 'Enter Value'
+]);
+$configurationForm->get('submit')->setAttributes(['class' => 'btn btn-info']);
+$configurationForm->prepare();
+
+$configurationGroupForm->setAttribute('action', $this->url('configuration-groups', ['action' => 'add']));
+$configurationGroupForm->get('name')->setAttributes([
+    'class' => 'form-control',
+    'placeholder' => 'Enter name'
+]);
+$configurationGroupForm->get('submit')->setAttributes(['class' => 'btn btn-info']);
+$configurationGroupForm->prepare();
 ?>
 
 <h1><?= $this->escapeHtml($title); ?></h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Breadcrumbs -->
+        <?= $this->configBreadcrumbs()->render(); ?>
+    </div>
+</div>
 
 <?= $this->flashMessenger()->render('error', ['alert', 'alert-warning']); ?>
 <?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>
 <?= $this->flashMessenger()->render('info', ['alert', 'alert-info']); ?>
 
+<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addConfigGroup">
+    Add new group
+</button>
 <table class="table table-striped">
 
     <tr>
@@ -33,14 +68,20 @@ $this->pageBreadcrumbs()->setItems($breadcrumbValues);
     <?php /** @var \Configuration\Entity\ConfigurationGroup $childGroup */
     foreach ($configurationGroup->getChildGroups() as $childGroup): ?>
         <tr>
-            <td><?= $this->escapeHtml($childGroup->getName()); ?></td>
+            <td><strong><?= $this->escapeHtml($childGroup->getName()); ?></strong></td>
             <td></td>
             <td>
                 <nobr>
                     <a class="btn btn-info" href="<?= $this->url('configurations',
                         ['action' => 'list', 'id' => $childGroup->getId()]); ?>">
-                        <span class="glyphicon glyphicon-pencil"></span> Manage
+                        Manage
                     </a>
+                    <button type="button" class="btn edit-config-group" data-toggle="modal" data-target="#editConfigGroup"
+                            data-id="<?= $this->escapeHtml($childGroup->getId()); ?>"
+                            data-name="<?= $this->escapeHtml($childGroup->getName()); ?>"
+                    >
+                        Edit
+                    </button>
                 </nobr>
             </td>
         </tr>
@@ -51,10 +92,167 @@ $this->pageBreadcrumbs()->setItems($breadcrumbValues);
         <tr>
             <td><?= $this->escapeHtml($configuration->getKey()); ?></td>
             <td><?= $this->escapeHtml($configuration->getValue()); ?></td>
-            <td></td>
+            <td>
+                <button type="button" class="btn edit-config" data-toggle="modal" data-target="#editConfig"
+                        data-id="<?= $this->escapeHtml($configuration->getId()); ?>"
+                        data-key="<?= $this->escapeHtml($configuration->getKey()); ?>"
+                        data-value="<?= $this->escapeHtml($configuration->getValue()); ?>"
+                >
+                    Edit
+                </button>
+            </td>
         </tr>
     <?php endforeach; ?>
 
+    <tr>
+        <td></td>
+        <td></td>
+        <td>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addConfig">Add new value
+            </button>
+        </td>
+    </tr>
+
 </table>
 
+<div id="addConfig" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new value</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?= $this->form()->openTag($configurationForm); ?>
+            <div class="modal-body">
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('key')); ?>
+                    <?= $this->formElement($configurationForm->get('key')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('key')); ?>
+                </div>
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('value')); ?>
+                    <?= $this->formElement($configurationForm->get('value')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('value')); ?>
+                </div>
+                <?= $this->formElement($configurationForm->get('config_group')); ?>
+                <?= $this->formElement($configurationForm->get('csrf')); ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?= $this->formElement($configurationForm->get('submit')); ?>
+            </div>
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>
 
+<div id="editConfig" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit value</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?= $this->form()->openTag($configurationForm); ?>
+            <div class="modal-body">
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('key')); ?>
+                    <?= $this->formElement($configurationForm->get('key')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('key')); ?>
+                </div>
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('value')); ?>
+                    <?= $this->formElement($configurationForm->get('value')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('value')); ?>
+                </div>
+                <?= $this->formElement($configurationForm->get('config_group')->setValue($configurationGroup->getId())); ?>
+                <?= $this->formElement($configurationForm->get('csrf')); ?>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-danger mr-auto delete-config">Delete</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?= $this->formElement($configurationForm->get('submit')); ?>
+            </div>
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>
+
+<div id="addConfigGroup" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add configuration group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?= $this->form()->openTag($configurationGroupForm); ?>
+            <div class="modal-body">
+                <div class="form-group">
+                    <?= $this->formLabel($configurationGroupForm->get('name')); ?>
+                    <?= $this->formElement($configurationGroupForm->get('name')); ?>
+                    <?= $this->formElementErrors($configurationGroupForm->get('name')); ?>
+                </div>
+                <?= $this->formElement($configurationGroupForm->get('parent_config_group')
+                    ->setValue($configurationGroup->getId())); ?>
+                <?= $this->formElement($configurationGroupForm->get('csrf')); ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?= $this->formElement($configurationGroupForm->get('submit')); ?>
+            </div>
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>
+
+<div id="editConfigGroup" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit configuration group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?= $this->form()->openTag($configurationGroupForm); ?>
+            <div class="modal-body">
+                <div class="form-group">
+                    <?= $this->formLabel($configurationGroupForm->get('name')); ?>
+                    <?= $this->formElement($configurationGroupForm->get('name')); ?>
+                    <?= $this->formElementErrors($configurationGroupForm->get('name')); ?>
+                </div>
+                <?= $this->formElement($configurationGroupForm->get('parent_config_group')
+                    ->setValue($configurationGroup->getId())); ?>
+                <?= $this->formElement($configurationGroupForm->get('csrf')); ?>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-danger mr-auto delete-config-group">Delete</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?= $this->formElement($configurationGroupForm->get('submit')); ?>
+            </div>
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.edit-config').click(function () {
+        var $form = $('#editConfig form');
+        $form.attr('action', '/configurations/edit/' + $(this).data('id'));
+        $form.find('input[name=key]').val($(this).data('key'));
+        $form.find('input[name=value]').val($(this).data('value'));
+        $form.find('.delete-config').attr('href', '/configurations/delete/' + $(this).data('id'));
+    });
+    $('.edit-config-group').click(function () {
+        var $form = $('#editConfigGroup form');
+        $form.attr('action', '/configuration-groups/edit/' + $(this).data('id'));
+        $form.find('input[name=name]').val($(this).data('name'));
+        $form.find('.delete-config-group').attr('href', '/configuration-groups/delete/' + $(this).data('id'));
+    });
+</script>

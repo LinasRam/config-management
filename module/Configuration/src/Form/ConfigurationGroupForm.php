@@ -5,14 +5,14 @@ namespace Configuration\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 
-class ConfigurationForm extends Form
+class ConfigurationGroupForm extends Form
 {
     /**
      * ConfigurationForm constructor.
      */
     public function __construct()
     {
-        parent::__construct('configuration-form');
+        parent::__construct('configuration-group-form');
 
         $this->setAttribute('method', 'post');
 
@@ -24,31 +24,20 @@ class ConfigurationForm extends Form
     {
         $this->add([
             'type' => 'text',
-            'name' => 'key',
+            'name' => 'name',
             'attributes' => [
-                'id' => 'key'
+                'id' => 'name'
             ],
             'options' => [
-                'label' => 'Key',
-            ],
-        ]);
-
-        $this->add([
-            'type' => 'text',
-            'name' => 'value',
-            'attributes' => [
-                'id' => 'value'
-            ],
-            'options' => [
-                'label' => 'Value',
+                'label' => 'name',
             ],
         ]);
 
         $this->add([
             'type' => 'hidden',
-            'name' => 'config_group',
+            'name' => 'parent_config_group',
             'attributes' => [
-                'id' => 'configGroup'
+                'id' => 'parentConfigGroup'
             ],
         ]);
 
@@ -78,24 +67,7 @@ class ConfigurationForm extends Form
         $this->setInputFilter($inputFilter);
 
         $inputFilter->add([
-            'name' => 'key',
-            'required' => true,
-            'filters' => [
-                ['name' => 'StringTrim'],
-            ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'min' => 1,
-                        'max' => 128
-                    ],
-                ],
-            ],
-        ]);
-
-        $inputFilter->add([
-            'name' => 'value',
+            'name' => 'name',
             'required' => true,
             'filters' => [
                 ['name' => 'StringTrim'],

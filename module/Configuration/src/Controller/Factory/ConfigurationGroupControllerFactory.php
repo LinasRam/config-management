@@ -2,16 +2,15 @@
 
 namespace Configuration\Controller\Factory;
 
-use Configuration\Controller\ConfigurationController;
+use Configuration\Controller\ConfigurationGroupController;
 use Configuration\Service\ConfigurationGroupManager;
-use Configuration\Service\ConfigurationManager;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ConfigurationControllerFactory implements FactoryInterface
+class ConfigurationGroupControllerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -19,7 +18,7 @@ class ConfigurationControllerFactory implements FactoryInterface
      * @param  ContainerInterface $container
      * @param  string $requestedName
      * @param  null|array $options
-     * @return ConfigurationController
+     * @return ConfigurationGroupController
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      *     creating a service.
@@ -27,9 +26,8 @@ class ConfigurationControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $configurationManager = $container->get(ConfigurationManager::class);
-        $configurationGroupManager = $container->get(ConfigurationGroupManager::class);
+        $configGroupManager = $container->get(ConfigurationGroupManager::class);
 
-        return new ConfigurationController($configurationManager, $configurationGroupManager);
+        return new ConfigurationGroupController($configGroupManager);
     }
 }

@@ -12,6 +12,7 @@
 
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+                        ->prependStylesheet($this->basePath('css/style.css'))
                         ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ?>
 
@@ -24,35 +25,35 @@
         ?>
     </head>
     <body>
-        <div class="container">
-            <!-- Navigation bar -->
-            <?php
-            // Check if the activeMenuItemId passed to layout view model
-            // and if so, use it for setting active navbar item.
-            if (isset($activeMenuItemId)) {
-                $this->mainMenu()->setActiveItemId($activeMenuItemId);
-            }
+        <!-- Navigation bar -->
+        <?php
+        // Check if the activeMenuItemId passed to layout view model
+        // and if so, use it for setting active navbar item.
+        if (isset($activeMenuItemId)) {
+            $this->mainMenu()->setActiveItemId($activeMenuItemId);
+        }
 
-            // Render the navbar
-            echo $this->mainMenu()->render();
-            ?>
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- Breadcrumbs -->
-                    <?= $this->pageBreadcrumbs()->render(); ?>
-                </div>
+        // Render the navbar
+        echo $this->mainMenu()->render();
+        ?>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Breadcrumbs -->
+                <?= $this->pageBreadcrumbs()->render(); ?>
             </div>
+        </div>
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <!-- Page content placeholder -->
                     <?= $this->content; ?>
                 </div>
             </div>
-            <hr>
-            <footer class="text-center">
-                <p>&copy; 2005 - <?= date('Y') ?> by Your Company. All rights reserved.</p>
-            </footer>
         </div>
+        <hr>
+        <footer class="text-center">
+            <p>&copy; 2005 - <?= date('Y') ?> by Your Company. All rights reserved.</p>
+        </footer>
         <?= $this->inlineScript() ?>
     </body>
 </html>

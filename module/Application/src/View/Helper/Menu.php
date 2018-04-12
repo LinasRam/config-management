@@ -59,6 +59,7 @@ class Menu extends AbstractHelper
         } // Do nothing if there are no items.
 
         $result = '<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">';
+        $result .= '<div class="container">';
         $result .= '<a class="navbar-brand" href="/">Config</a>';
         $result .= '<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">';
         $result .= '<span class="navbar-toggler-icon"></span>';
@@ -85,6 +86,7 @@ class Menu extends AbstractHelper
         }
 
         $result .= '</ul>';
+        $result .= '</div>';
         $result .= '</nav>';
 
         return $result;

@@ -4,9 +4,11 @@ namespace Configuration;
 
 use Configuration\Controller\Factory\ApplicationControllerFactory;
 use Configuration\Controller\Factory\ConfigurationControllerFactory;
+use Configuration\Controller\Factory\ConfigurationGroupControllerFactory;
 use Configuration\Controller\Factory\EnvironmentControllerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Zend\Router\Http\Segment;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'controllers' => [
@@ -14,6 +16,7 @@ return [
             Controller\ApplicationController::class => ApplicationControllerFactory::class,
             Controller\EnvironmentController::class => EnvironmentControllerFactory::class,
             Controller\ConfigurationController::class => ConfigurationControllerFactory::class,
+            Controller\ConfigurationGroupController::class => ConfigurationGroupControllerFactory::class,
         ],
     ],
     'router' => [
@@ -60,6 +63,19 @@ return [
                     ],
                 ],
             ],
+            'configuration-groups' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/configuration-groups[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+'
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\ConfigurationGroupController::class,
+                    ],
+                ],
+            ],
         ],
     ],
     'access_filter' => [
@@ -71,7 +87,10 @@ return [
                 ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+environment.manage'],
             ],
             Controller\ConfigurationController::class => [
-                ['actions' => ['index', 'list'], 'allow' => '@'],
+                ['actions' => ['index', 'list', 'add', 'edit', 'delete'], 'allow' => '@'],
+            ],
+            Controller\ConfigurationGroupController::class => [
+                ['actions' => ['add', 'edit', 'delete'], 'allow' => '@'],
             ],
         ]
     ],
@@ -80,11 +99,20 @@ return [
             Service\ApplicationManager::class => Service\Factory\ApplicationManagerFactory::class,
             Service\EnvironmentManager::class => Service\Factory\EnvironmentManagerFactory::class,
             Service\ConfigurationManager::class => Service\Factory\ConfigurationManagerFactory::class,
+            Service\ConfigurationGroupManager::class => Service\Factory\ConfigurationGroupManagerFactory::class,
         ],
     ],
     'view_manager' => [
         'template_path_stack' => [
             'Configuration' => __DIR__ . '/../view',
+        ],
+    ],
+    'view_helpers' => [
+        'factories' => [
+            View\Helper\ConfigBreadcrumbs::class => InvokableFactory::class,
+        ],
+        'aliases' => [
+            'configBreadcrumbs' => View\Helper\ConfigBreadcrumbs::class,
         ],
     ],
     'doctrine' => [

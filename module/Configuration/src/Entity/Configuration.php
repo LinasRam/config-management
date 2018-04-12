@@ -22,14 +22,14 @@ class Configuration
     /**
      * @var string
      *
-     * @ORM\Column(name="key")
+     * @ORM\Column(name="config_key")
      */
     protected $key;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="value")
+     * @ORM\Column(name="config_value")
      */
     protected $value;
 

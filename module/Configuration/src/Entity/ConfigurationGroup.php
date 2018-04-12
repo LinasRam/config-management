@@ -47,25 +47,25 @@ class ConfigurationGroup
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="ConfigurationGroup", mappedBy="childGroups")
+     * @ORM\ManyToMany(targetEntity="ConfigurationGroup", inversedBy="childGroups")
+     * @ORM\JoinTable(name="config_group_hierarchy",
+     *      joinColumns={@ORM\JoinColumn(name="child_config_group_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="parent_config_group_id", referencedColumnName="id")}
+     *      )
      */
     protected $parentGroups;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="ConfigurationGroup", inversedBy="parentGroups")
-     * @ORM\JoinTable(name="config_group_hierarchy",
-     *      joinColumns={@ORM\JoinColumn(name="parent_config_group_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="child_config_group_id", referencedColumnName="id")}
-     *      )
+     * @ORM\ManyToMany(targetEntity="ConfigurationGroup", mappedBy="parentGroups")
      */
     protected $childGroups;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Configuration", mappedBy="configurationGroup")
+     * @ORM\OneToMany(targetEntity="Configuration", mappedBy="configurationGroup", orphanRemoval=true)
      */
     protected $configurations;
 
