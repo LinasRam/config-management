@@ -2,7 +2,9 @@
 
 namespace Configuration\Service;
 
+use Configuration\Entity\Application;
 use Configuration\Entity\ConfigurationGroup;
+use Configuration\Entity\Environment;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use User\Service\RbacManager;
@@ -40,6 +42,23 @@ class ConfigurationGroupManager
     {
         /** @var ConfigurationGroup $configurationGroup */
         $configurationGroup = $this->entityManager->getRepository(ConfigurationGroup::class)->find($id);
+
+        return $configurationGroup;
+    }
+
+    /**
+     * @param string $application
+     * @param string $environment
+     * @return ConfigurationGroup|null
+     */
+    public function getRootConfigurationGroup(string $application, string $environment): ?ConfigurationGroup
+    {
+        $application = $this->entityManager->getRepository(Application::class)->findByName($application);
+        $environment = $this->entityManager->getRepository(Environment::class)->findByName($environment);
+
+        /** @var ConfigurationGroup $configurationGroup */
+        $configurationGroup = $this->entityManager->getRepository(ConfigurationGroup::class)
+            ->findOneBy(['application' => $application, 'environment' => $environment, 'isRoot' => true]);
 
         return $configurationGroup;
     }

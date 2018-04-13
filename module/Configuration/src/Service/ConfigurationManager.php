@@ -45,6 +45,29 @@ class ConfigurationManager
         return $configuration;
     }
 
+    /**
+     * @param ConfigurationGroup $configurationGroup
+     * @param array $configurations
+     * @return array
+     */
+    public function getConfigurationsByGroupRecursively(
+        ConfigurationGroup $configurationGroup,
+        array &$configurations = []
+    ): array {
+        /** @var ConfigurationGroup $childGroup */
+        foreach ($configurationGroup->getChildGroups() as $childGroup) {
+            $configurations[$childGroup->getName()] = [];
+            $this->getConfigurationsByGroupRecursively($childGroup, $configurations[$childGroup->getName()]);
+        }
+
+        /** @var Configuration $configuration */
+        foreach ($configurationGroup->getConfigurations() as $configuration) {
+            $configurations[$configuration->getKey()] = $configuration->getValue();
+        }
+
+        return $configurations;
+    }
+
     public function getRootGroups(): array
     {
         return $this->entityManager->getRepository(ConfigurationGroup::class)->findBy(

@@ -2,6 +2,7 @@
 
 namespace Configuration;
 
+use Configuration\Controller\Factory\ApiControllerFactory;
 use Configuration\Controller\Factory\ApplicationControllerFactory;
 use Configuration\Controller\Factory\ConfigurationControllerFactory;
 use Configuration\Controller\Factory\ConfigurationGroupControllerFactory;
@@ -13,14 +14,29 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 return [
     'controllers' => [
         'factories' => [
+            Controller\ApiController::class => ApiControllerFactory::class,
             Controller\ApplicationController::class => ApplicationControllerFactory::class,
-            Controller\EnvironmentController::class => EnvironmentControllerFactory::class,
             Controller\ConfigurationController::class => ConfigurationControllerFactory::class,
             Controller\ConfigurationGroupController::class => ConfigurationGroupControllerFactory::class,
+            Controller\EnvironmentController::class => EnvironmentControllerFactory::class,
         ],
     ],
     'router' => [
         'routes' => [
+            'api' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/api/v1[/:action[/:application][/:environment]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'application' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'environment' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                    ],
+                ],
+            ],
             'applications' => [
                 'type' => Segment::class,
                 'options' => [
@@ -80,6 +96,9 @@ return [
     ],
     'access_filter' => [
         'controllers' => [
+            Controller\ApiController::class => [
+                ['actions' => ['configurations'], 'allow' => '@'],
+            ],
             Controller\ApplicationController::class => [
                 ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+application.manage'],
             ],
@@ -105,6 +124,9 @@ return [
     'view_manager' => [
         'template_path_stack' => [
             'Configuration' => __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
     'view_helpers' => [
