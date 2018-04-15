@@ -114,16 +114,8 @@ class RoleManager
                     'user.manage',
                     'role.manage',
                     'permission.manage',
-                    'profile.any.view',
                     'application.manage',
                     'environment.manage',
-                ],
-            ],
-                'Guest' => [
-                'description' => 'A person who can log in and view own profile.',
-                'parent' => null,
-                'permissions' => [
-                    'profile.own.view',
                 ],
             ],
         ];

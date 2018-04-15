@@ -36,10 +36,12 @@
         // Render the navbar
         echo $this->mainMenu()->render();
         ?>
-        <div class="row">
+        <div class="row main-breadcrumb">
             <div class="col-md-12">
-                <!-- Breadcrumbs -->
-                <?= $this->pageBreadcrumbs()->render(); ?>
+                <div class="container">
+                    <!-- Breadcrumbs -->
+                    <?= $this->pageBreadcrumbs()->render(); ?>
+                </div>
             </div>
         </div>
         <div class="container">

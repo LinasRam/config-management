@@ -31,7 +31,7 @@ class ConfigurationGroup
     /**
      * @var Application
      *
-     * @ORM\ManyToOne(targetEntity="Application")
+     * @ORM\ManyToOne(targetEntity="Application", inversedBy="configurationGroups")
      * @ORM\JoinColumn(name="application_id", referencedColumnName="id")
      */
     protected $application;

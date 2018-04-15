@@ -21,3 +21,9 @@
 .alert {
     border-radius: 0;
 }
+
+.main-breadcrumb {
+    background-color: #e9ecef;
+    height: 48px;
+    margin-bottom: 16px;
+}

@@ -68,14 +68,11 @@ class ConfigurationManager
         return $configurations;
     }
 
-    public function getRootGroups(): array
-    {
-        return $this->entityManager->getRepository(ConfigurationGroup::class)->findBy(
-            ['isRoot' => true],
-            ['name' => 'ASC']
-        );
-    }
-
+    /**
+     * @param ConfigurationGroup $configurationGroup
+     * @param array $parentGroups
+     * @return array
+     */
     public function getParentGroupsRecursively(ConfigurationGroup $configurationGroup, array $parentGroups = []): array
     {
         /** @var ConfigurationGroup $parentGroup */

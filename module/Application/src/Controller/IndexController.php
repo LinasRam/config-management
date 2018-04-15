@@ -71,11 +71,6 @@ class IndexController extends AbstractActionController
             return;
         }
 
-        if (!$this->access('profile.any.view') &&
-            !$this->access('profile.own.view', ['user' => $user])) {
-            return $this->redirect()->toRoute('not-authorized');
-        }
-
         return new ViewModel([
             'user' => $user
         ]);

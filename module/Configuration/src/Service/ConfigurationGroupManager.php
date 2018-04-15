@@ -47,6 +47,29 @@ class ConfigurationGroupManager
     }
 
     /**
+     * @return array
+     */
+    public function getAccessibleRootGroups(): array
+    {
+        $rootGroups = $this->entityManager->getRepository(ConfigurationGroup::class)->findBy(
+            ['isRoot' => true],
+            ['name' => 'ASC']
+        );
+
+        $accessibleRootGroups = [];
+        /** @var ConfigurationGroup $rootGroup */
+        foreach ($rootGroups as $rootGroup) {
+            $permission = 'manage.' . $rootGroup->getApplication()->getName() . '.'
+                . $rootGroup->getEnvironment()->getName();
+            if ($this->rbacManager->isGranted(null, $permission)) {
+                $accessibleRootGroups[] = $rootGroup;
+            }
+        }
+
+        return $accessibleRootGroups;
+    }
+
+    /**
      * @param string $application
      * @param string $environment
      * @return ConfigurationGroup|null

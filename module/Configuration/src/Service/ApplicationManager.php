@@ -8,6 +8,9 @@ use Configuration\Entity\Environment;
 use Configuration\Form\ApplicationForm;
 use Doctrine\ORM\EntityManager;
 use Exception;
+use User\Entity\Permission;
+use User\Entity\Role;
+use User\Entity\User;
 use User\Service\RbacManager;
 
 class ApplicationManager
@@ -25,14 +28,24 @@ class ApplicationManager
     private $rbacManager;
 
     /**
+     * @var ConfigurationGroupManager
+     */
+    private $configGroupManager;
+
+    /**
      * ApplicationManager constructor.
      * @param EntityManager $entityManager
      * @param RbacManager $rbacManager
+     * @param ConfigurationGroupManager $configurationGroupManager
      */
-    public function __construct(EntityManager $entityManager, RbacManager $rbacManager)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        RbacManager $rbacManager,
+        ConfigurationGroupManager $configurationGroupManager
+    ) {
         $this->entityManager = $entityManager;
         $this->rbacManager = $rbacManager;
+        $this->configGroupManager = $configurationGroupManager;
     }
 
     /**
@@ -77,11 +90,15 @@ class ApplicationManager
         $application->setDescription($data['description']);
 
         $this->createRootGroups($application, $data['environments']);
+        $this->createRoles($application, $data['environments']);
         $this->assignEnvironments($application, $data['environments']);
 
         $this->entityManager->persist($application);
 
         $this->entityManager->flush();
+
+        // Reload RBAC container.
+        $this->rbacManager->init(true);
     }
 
     /**
@@ -105,7 +122,71 @@ class ApplicationManager
         }
     }
 
-    public function createRootGroups(Application $application, array $environmentIds)
+    /**
+     * @param Application $application
+     * @param array $environmentIds
+     */
+    private function createRoles(Application $application, array $environmentIds)
+    {
+        $environments = $this->entityManager->getRepository(Environment::class)->findAll();
+
+        /** @var Environment $environment */
+        foreach ($environments as $environment) {
+            $permissionName = 'manage.' . $application->getName() . '.' . $environment->getName();
+            /** @var Permission $permission */
+            $permission = $this->entityManager->getRepository(Permission::class)
+                ->findOneByName($permissionName);
+
+            $roleName = $application->getName() . ' ' . $environment->getName() . ' manager';
+            /** @var Role $role */
+            $role = $this->entityManager->getRepository(Role::class)->findOneByName($roleName);
+
+            if (!in_array($environment->getId(), $environmentIds)) {
+                if ($role) {
+                    $this->entityManager->remove($role);
+                }
+                if ($permission) {
+                    $this->entityManager->remove($permission);
+                }
+            } else {
+                if (!$permission) {
+                    $permission = new Permission();
+                    $permission->setName($permissionName);
+                    $permission->setDescription(
+                        'Manage ' . $application->getName() . ' ' . $environment->getName()
+                        . ' environment configuration'
+                    );
+                    $permission->setDateCreated(date('Y-m-d H:i:s'));
+
+                    $this->entityManager->persist($permission);
+
+                    /** @var Role $rootRole */
+                    $rootRole = $this->entityManager->getRepository(Role::class)->find(1);
+                    $rootRole->getPermissions()->add($permission);
+                }
+
+                if (!$role) {
+                    $role = new Role();
+                    $role->setName($roleName);
+                    $role->setDescription(
+                        'A person who manages ' . $application->getName() . ' '
+                        . $environment->getName() . ' environment configuration.'
+                    );
+                    $role->getPermissions()->add($permission);
+                    $role->setDateCreated(date('Y-m-d H:i:s'));
+
+                    $this->entityManager->persist($role);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Application $application
+     * @param array $environmentIds
+     * @throws Exception
+     */
+    private function createRootGroups(Application $application, array $environmentIds)
     {
         $existingEnvironmentIds = [];
         /** @var Environment $existingEnvironment */
@@ -122,13 +203,33 @@ class ApplicationManager
                     throw new Exception('Not found environment by ID');
                 }
 
-                $configurationGroup = new ConfigurationGroup();
-                $configurationGroup->setApplication($application);
-                $configurationGroup->setEnvironment($environment);
-                $configurationGroup->setName($application->getName() . ' ' . $environment->getName());
-                $configurationGroup->setIsRoot(true);
+                $configurationGroup = $this->configGroupManager->getRootConfigurationGroup(
+                    $application->getName(),
+                    $environment->getName()
+                );
+
+                if (!$configurationGroup) {
+                    $configurationGroup = new ConfigurationGroup();
+                    $configurationGroup->setApplication($application);
+                    $configurationGroup->setEnvironment($environment);
+                    $configurationGroup->setName($application->getName() . ' ' . $environment->getName());
+                    $configurationGroup->setIsRoot(true);
+                }
 
                 $this->entityManager->persist($configurationGroup);
+            }
+        }
+
+        $environments = $this->entityManager->getRepository(Environment::class)->findAll();
+        foreach ($environments as $environment) {
+            if (!in_array($environment->getId(), $environmentIds)) {
+                $configurationGroup = $this->configGroupManager->getRootConfigurationGroup(
+                    $application->getName(),
+                    $environment->getName()
+                );
+                if ($configurationGroup) {
+                    $this->entityManager->remove($configurationGroup);
+                }
             }
         }
     }
@@ -138,8 +239,40 @@ class ApplicationManager
      */
     public function deleteApplication(Application $application)
     {
+        $this->deleteRoles($application);
+
         $this->entityManager->remove($application);
         $this->entityManager->flush();
+    }
+
+    /**
+     * @param Application $application
+     */
+    private function deleteRoles(Application $application)
+    {
+        $environments = $this->entityManager->getRepository(Environment::class)->findAll();
+
+        /** @var Environment $environment */
+        foreach ($environments as $environment) {
+            $roleName = $application->getName() . ' ' . $environment->getName() . ' manager';
+            /** @var Role $role */
+            $role = $this->entityManager->getRepository(Role::class)->findOneByName($roleName);
+
+            if ($role) {
+                $usersWithRole = $this->entityManager->getRepository(User::class)->findByRole($role->getId());
+                /** @var User $user */
+                foreach ($usersWithRole as $user) {
+                    $user->getRoles()->removeElement($role);
+                }
+                $this->entityManager->remove($role);
+            }
+
+            $permissionName = 'manage.' . $application->getName() . '.' . $environment->getName();
+            $permission = $this->entityManager->getRepository(Permission::class)->findOneByName($permissionName);
+            if ($permission) {
+                $this->entityManager->remove($permission);
+            }
+        }
     }
 
     /**

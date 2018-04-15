@@ -4,6 +4,7 @@ namespace Configuration\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * @ORM\Entity
@@ -53,11 +54,17 @@ class Application
     protected $environments;
 
     /**
+     * @ORM\OneToMany(targetEntity="Configuration\Entity\ConfigurationGroup", mappedBy="application", orphanRemoval=true)
+     */
+    protected $configurationGroups;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->environments = new ArrayCollection();
+        $this->configurationGroups = new ArrayCollection();
     }
 
     /**
@@ -138,5 +145,13 @@ class Application
     public function addEnvironment(Environment $environment)
     {
         $this->environments->add($environment);
+    }
+
+    /**
+     * @return ArrayCollection|PersistentCollection
+     */
+    public function getConfigurationGroups()
+    {
+        return $this->configurationGroups;
     }
 }

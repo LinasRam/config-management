@@ -36,7 +36,7 @@ class ConfigurationController extends AbstractActionController
 
     public function indexAction()
     {
-        $configurationGroups = $this->configurationManager->getRootGroups();
+        $configurationGroups = $this->configurationGroupManager->getAccessibleRootGroups();
 
         return new ViewModel(['configurationGroups' => $configurationGroups]);
     }
