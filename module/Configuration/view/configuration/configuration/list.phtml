@@ -88,7 +88,7 @@ $configurationGroupForm->prepare();
     <?php endforeach; ?>
 
     <?php /** @var \Configuration\Entity\Configuration $configuration */
-    foreach ($configurationGroup->getConfigurations() as $configuration): ?>
+    foreach ($configurations as $configuration): ?>
         <tr>
             <td><?= $this->escapeHtml($configuration->getKey()); ?></td>
             <td><?= $this->escapeHtml($configuration->getValue()); ?></td>
@@ -97,6 +97,7 @@ $configurationGroupForm->prepare();
                         data-id="<?= $this->escapeHtml($configuration->getId()); ?>"
                         data-key="<?= $this->escapeHtml($configuration->getKey()); ?>"
                         data-value="<?= $this->escapeHtml($configuration->getValue()); ?>"
+                        data-roles="<?= $this->escapeHtml(implode(',', $configuration->getRestrictedToRolesIds())); ?>"
                 >
                     Edit
                 </button>
@@ -136,6 +137,11 @@ $configurationGroupForm->prepare();
                     <?= $this->formElement($configurationForm->get('value')); ?>
                     <?= $this->formElementErrors($configurationForm->get('value')); ?>
                 </div>
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('roles')); ?>
+                    <?= $this->formElement($configurationForm->get('roles')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('roles')); ?>
+                </div>
                 <?= $this->formElement($configurationForm->get('config_group')); ?>
                 <?= $this->formElement($configurationForm->get('csrf')); ?>
             </div>
@@ -168,6 +174,11 @@ $configurationGroupForm->prepare();
                     <?= $this->formLabel($configurationForm->get('value')); ?>
                     <?= $this->formElement($configurationForm->get('value')); ?>
                     <?= $this->formElementErrors($configurationForm->get('value')); ?>
+                </div>
+                <div class="form-group">
+                    <?= $this->formLabel($configurationForm->get('roles')); ?>
+                    <?= $this->formElement($configurationForm->get('roles')); ?>
+                    <?= $this->formElementErrors($configurationForm->get('roles')); ?>
                 </div>
                 <?= $this->formElement($configurationForm->get('config_group')->setValue($configurationGroup->getId())); ?>
                 <?= $this->formElement($configurationForm->get('csrf')); ?>
@@ -247,6 +258,16 @@ $configurationGroupForm->prepare();
         $form.attr('action', '/configurations/edit/' + $(this).data('id'));
         $form.find('input[name=key]').val($(this).data('key'));
         $form.find('input[name=value]').val($(this).data('value'));
+
+        var roles = '' + $(this).data('roles');
+        roles = roles.split(',');
+
+        $.each(roles, function (key, value) {
+            if (value) {
+                $form.find('input[type=checkbox][value=' + value + ']').attr('checked', true);
+            }
+        });
+
         $form.find('.delete-config').attr('href', '/configurations/delete/' + $(this).data('id'));
     });
     $('.edit-config-group').click(function () {

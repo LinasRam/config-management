@@ -52,7 +52,7 @@ class ApiController extends AbstractActionController
             return new JsonModel();
         }
 
-        $configurations = $this->configurationManager->getConfigurationsByGroupRecursively($rootConfigurationGroup);
+        $configurations = $this->configurationManager->getConfigurationsByRootGroupRecursively($rootConfigurationGroup);
 
         return new JsonModel($configurations);
     }

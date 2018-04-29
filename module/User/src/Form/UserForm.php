@@ -114,11 +114,8 @@ class UserForm extends Form
 
         // Add "roles" field
         $this->add([
-            'type' => 'select',
+            'type' => 'multicheckbox',
             'name' => 'roles',
-            'attributes' => [
-                'multiple' => 'multiple',
-            ],
             'options' => [
                 'label' => 'Role(s)',
             ],

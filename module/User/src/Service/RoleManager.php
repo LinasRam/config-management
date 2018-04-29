@@ -209,4 +209,21 @@ class RoleManager
         // Reload RBAC container.
         $this->rbacManager->init(true);
     }
+
+    /**
+     * @return array
+     */
+    public function getAllRoles(): array
+    {
+        $allRoles = $this->entityManager->getRepository(Role::class)
+            ->findBy([], ['name' => 'ASC']);
+
+        $roleList = [];
+        /** @var Role $role */
+        foreach ($allRoles as $role) {
+            $roleList[$role->getId()] = $role->getName();
+        }
+
+        return $roleList;
+    }
 }

@@ -90,7 +90,7 @@ class ApplicationManager
         $application->setDescription($data['description']);
 
         $this->createRootGroups($application, $data['environments']);
-        $this->createRoles($application, $data['environments']);
+        $this->createPermissions($application, $data['environments']);
         $this->assignEnvironments($application, $data['environments']);
 
         $this->entityManager->persist($application);
@@ -126,7 +126,7 @@ class ApplicationManager
      * @param Application $application
      * @param array $environmentIds
      */
-    private function createRoles(Application $application, array $environmentIds)
+    private function createPermissions(Application $application, array $environmentIds)
     {
         $environments = $this->entityManager->getRepository(Environment::class)->findAll();
 
@@ -137,14 +137,7 @@ class ApplicationManager
             $permission = $this->entityManager->getRepository(Permission::class)
                 ->findOneByName($permissionName);
 
-            $roleName = $application->getName() . ' ' . $environment->getName() . ' manager';
-            /** @var Role $role */
-            $role = $this->entityManager->getRepository(Role::class)->findOneByName($roleName);
-
             if (!in_array($environment->getId(), $environmentIds)) {
-                if ($role) {
-                    $this->entityManager->remove($role);
-                }
                 if ($permission) {
                     $this->entityManager->remove($permission);
                 }
@@ -163,19 +156,6 @@ class ApplicationManager
                     /** @var Role $rootRole */
                     $rootRole = $this->entityManager->getRepository(Role::class)->find(1);
                     $rootRole->getPermissions()->add($permission);
-                }
-
-                if (!$role) {
-                    $role = new Role();
-                    $role->setName($roleName);
-                    $role->setDescription(
-                        'A person who manages ' . $application->getName() . ' '
-                        . $environment->getName() . ' environment configuration.'
-                    );
-                    $role->getPermissions()->add($permission);
-                    $role->setDateCreated(date('Y-m-d H:i:s'));
-
-                    $this->entityManager->persist($role);
                 }
             }
         }

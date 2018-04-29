@@ -3,6 +3,7 @@
 namespace User\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\PersistentCollection;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Permissions\Rbac\Rbac;
@@ -151,6 +152,45 @@ class RbacManager
                         return true;
                     }
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * @param PersistentCollection $roles
+     * @return bool
+     * @throws \Exception
+     */
+    public function hasRole(?User $user, PersistentCollection $roles)
+    {
+        if ($this->rbac == null) {
+            $this->init();
+        }
+
+        if ($user == null) {
+
+            $identity = $this->authService->getIdentity();
+            if ($identity == null) {
+                return false;
+            }
+
+            $user = $this->entityManager->getRepository(User::class)
+                ->findOneByEmail($identity);
+            if ($user == null) {
+                // Oops.. the identity presents in session, but there is no such user in database.
+                // We throw an exception, because this is a possible security problem.
+                throw new \Exception('There is no user with such identity');
+            }
+        }
+
+        $userRoles = $user->getRoles();
+
+        foreach ($userRoles as $userRole) {
+            if ($roles->contains($userRole)) {
+                return true;
             }
         }
 

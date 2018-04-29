@@ -5,7 +5,9 @@ namespace Configuration\Service;
 use Configuration\Entity\Configuration;
 use Configuration\Entity\ConfigurationGroup;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\PersistentCollection;
 use Exception;
+use User\Entity\Role;
 use User\Service\RbacManager;
 
 class ConfigurationManager
@@ -47,17 +49,37 @@ class ConfigurationManager
 
     /**
      * @param ConfigurationGroup $configurationGroup
+     * @return array
+     */
+    public function getConfigurationsByGroup(ConfigurationGroup $configurationGroup): array
+    {
+        $configurations = [];
+
+        /** @var Configuration $configuration */
+        foreach ($configurationGroup->getConfigurations() as $configuration) {
+            /** @var PersistentCollection $restrictedToRoles */
+            $restrictedToRoles = $configuration->getRestrictedToRoles();
+            if ($restrictedToRoles->isEmpty() || $this->rbacManager->hasRole(null, $restrictedToRoles)) {
+                $configurations[] = $configuration;
+            }
+        }
+
+        return $configurations;
+    }
+
+    /**
+     * @param ConfigurationGroup $configurationGroup
      * @param array $configurations
      * @return array
      */
-    public function getConfigurationsByGroupRecursively(
+    public function getConfigurationsByRootGroupRecursively(
         ConfigurationGroup $configurationGroup,
         array &$configurations = []
     ): array {
         /** @var ConfigurationGroup $childGroup */
         foreach ($configurationGroup->getChildGroups() as $childGroup) {
             $configurations[$childGroup->getName()] = [];
-            $this->getConfigurationsByGroupRecursively($childGroup, $configurations[$childGroup->getName()]);
+            $this->getConfigurationsByRootGroupRecursively($childGroup, $configurations[$childGroup->getName()]);
         }
 
         /** @var Configuration $configuration */
@@ -109,10 +131,36 @@ class ConfigurationManager
         $configuration->setKey($data['key']);
         $configuration->setValue($data['value']);
         $configuration->setConfigurationGroup($configurationGroup);
+        $this->assignRoles($configuration, $data['roles']);
 
         $this->entityManager->persist($configuration);
 
         $this->entityManager->flush();
+    }
+
+    /**
+     * @param Configuration $configuration
+     * @param array $roleIds
+     * @throws Exception
+     */
+    private function assignRoles(Configuration $configuration, array $roleIds = null)
+    {
+        $configuration->getRestrictedToRoles()->clear();
+
+        if (!$roleIds) {
+            return;
+        }
+
+        foreach ($roleIds as $roleId) {
+            /** @var Role $role */
+            $role = $this->entityManager->getRepository(Role::class)
+                ->find($roleId);
+            if ($role == null) {
+                throw new \Exception('Not found role by ID');
+            }
+
+            $configuration->addRestrictedToRole($role);
+        }
     }
 
     /**

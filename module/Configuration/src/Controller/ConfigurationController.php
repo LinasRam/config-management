@@ -6,6 +6,7 @@ use Configuration\Form\ConfigurationForm;
 use Configuration\Form\ConfigurationGroupForm;
 use Configuration\Service\ConfigurationGroupManager;
 use Configuration\Service\ConfigurationManager;
+use User\Service\RoleManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -22,16 +23,24 @@ class ConfigurationController extends AbstractActionController
     private $configurationGroupManager;
 
     /**
+     * @var RoleManager
+     */
+    private $roleManager;
+
+    /**
      * ConfigurationController constructor.
      * @param ConfigurationManager $configurationManager
      * @param ConfigurationGroupManager $configurationGroupManager
+     * @param RoleManager $roleManager
      */
     public function __construct(
         ConfigurationManager $configurationManager,
-        ConfigurationGroupManager $configurationGroupManager
+        ConfigurationGroupManager $configurationGroupManager,
+        RoleManager $roleManager
     ) {
         $this->configurationManager = $configurationManager;
         $this->configurationGroupManager = $configurationGroupManager;
+        $this->roleManager = $roleManager;
     }
 
     public function indexAction()
@@ -56,6 +65,8 @@ class ConfigurationController extends AbstractActionController
             return;
         }
 
+        $configurations = $this->configurationManager->getConfigurationsByGroup($configurationGroup);
+
         $title = $configurationGroup->getApplication()->getName()
             . '/' . $configurationGroup->getEnvironment()->getName();
 
@@ -66,6 +77,7 @@ class ConfigurationController extends AbstractActionController
 
         $configurationForm = new ConfigurationForm();
         $configurationForm->setData(['config_group' => $id]);
+        $configurationForm->get('roles')->setValueOptions($this->roleManager->getAllRoles());
 
         $configurationGroupForm = new ConfigurationGroupForm();
         $configurationGroupForm->setData(
@@ -76,6 +88,7 @@ class ConfigurationController extends AbstractActionController
             'title' => $title,
             'parentGroups' => $parentGroups,
             'configurationGroup' => $configurationGroup,
+            'configurations' => $configurations,
             'configurationForm' => $configurationForm,
             'configurationGroupForm' => $configurationGroupForm,
         ]);
@@ -98,6 +111,9 @@ class ConfigurationController extends AbstractActionController
 
             return $this->redirect()->toRoute('configurations', ['action' => 'list', 'id' => $data['config_group']]);
         }
+
+        $this->flashMessenger()->addErrorMessage($form->getMessages());
+        return $this->redirect()->toRoute('configurations', ['action' => 'list', 'id' => $data['config_group']]);
     }
 
     public function editAction()
@@ -130,6 +146,9 @@ class ConfigurationController extends AbstractActionController
 
             return $this->redirect()->toRoute('configurations', ['action' => 'list', 'id' => $data['config_group']]);
         }
+
+        $this->flashMessenger()->addErrorMessage($form->getMessages());
+        return $this->redirect()->toRoute('configurations', ['action' => 'list', 'id' => $data['config_group']]);
     }
 
     public function deleteAction()

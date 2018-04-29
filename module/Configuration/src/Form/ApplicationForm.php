@@ -64,11 +64,8 @@ class ApplicationForm extends Form
         ]);
 
         $this->add([
-            'type' => 'select',
+            'type' => 'multicheckbox',
             'name' => 'environments',
-            'attributes' => [
-                'multiple' => 'multiple',
-            ],
             'options' => [
                 'label' => 'Environment(s)',
             ],

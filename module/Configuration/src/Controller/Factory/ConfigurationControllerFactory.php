@@ -7,6 +7,7 @@ use Configuration\Service\ConfigurationGroupManager;
 use Configuration\Service\ConfigurationManager;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use User\Service\RoleManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -29,7 +30,8 @@ class ConfigurationControllerFactory implements FactoryInterface
     {
         $configurationManager = $container->get(ConfigurationManager::class);
         $configurationGroupManager = $container->get(ConfigurationGroupManager::class);
+        $roleManager = $container->get(RoleManager::class);
 
-        return new ConfigurationController($configurationManager, $configurationGroupManager);
+        return new ConfigurationController($configurationManager, $configurationGroupManager, $roleManager);
     }
 }

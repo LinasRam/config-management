@@ -2,7 +2,9 @@
 
 namespace Configuration\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use User\Entity\Role;
 
 /**
  * @ORM\Entity
@@ -40,6 +42,23 @@ class Configuration
      * @ORM\JoinColumn(name="config_group_id", referencedColumnName="id")
      */
     protected $configurationGroup;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User\Entity\Role")
+     * @ORM\JoinTable(name="configuration_role",
+     *      joinColumns={@ORM\JoinColumn(name="configuration_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     *      )
+     */
+    private $restrictedToRoles;
+
+    /**
+     * Configuration constructor.
+     */
+    public function __construct()
+    {
+        $this->restrictedToRoles = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -103,5 +122,36 @@ class Configuration
     public function setConfigurationGroup(ConfigurationGroup $configurationGroup)
     {
         $this->configurationGroup = $configurationGroup;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRestrictedToRoles()
+    {
+        return $this->restrictedToRoles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRestrictedToRolesIds()
+    {
+        $ids = [];
+
+        /** @var Role $role */
+        foreach ($this->restrictedToRoles as $role) {
+            $ids[] = $role->getId();
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param Role $role
+     */
+    public function addRestrictedToRole(Role $role)
+    {
+        $this->restrictedToRoles->add($role);
     }
 }

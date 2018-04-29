@@ -45,6 +45,15 @@ class ConfigurationForm extends Form
         ]);
 
         $this->add([
+            'type' => 'multicheckbox',
+            'name' => 'roles',
+            'options' => [
+                'label' => 'Restrict to role(s)',
+                'disable_inarray_validator' => true,
+            ],
+        ]);
+
+        $this->add([
             'type' => 'hidden',
             'name' => 'config_group',
             'attributes' => [
@@ -109,6 +118,11 @@ class ConfigurationForm extends Form
                     ],
                 ],
             ],
+        ]);
+
+        $inputFilter->add([
+            'name' => 'roles',
+            'required' => false,
         ]);
     }
 }
