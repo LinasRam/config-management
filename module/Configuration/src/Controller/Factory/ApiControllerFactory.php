@@ -5,8 +5,10 @@ namespace Configuration\Controller\Factory;
 use Configuration\Controller\ApiController;
 use Configuration\Service\ConfigurationGroupManager;
 use Configuration\Service\ConfigurationManager;
+use Configuration\Service\FileGenerator;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use User\Service\UserManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -29,7 +31,9 @@ class ApiControllerFactory implements FactoryInterface
     {
         $configurationManager = $container->get(ConfigurationManager::class);
         $configurationGroupManager = $container->get(ConfigurationGroupManager::class);
+        $userManager = $container->get(UserManager::class);
+        $fileGenerator = $container->get(FileGenerator::class);
 
-        return new ApiController($configurationManager, $configurationGroupManager);
+        return new ApiController($configurationManager, $configurationGroupManager, $userManager, $fileGenerator);
     }
 }

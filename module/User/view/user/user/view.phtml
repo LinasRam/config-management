@@ -54,6 +54,10 @@ $this->pageBreadcrumbs()->setItems([
                 <th>Roles:</th>
                 <td><?= $this->escapeHtml($user->getRolesAsString()) ?></th>
             </tr>
+            <tr>
+                <th>Token:</th>
+                <td><?= $this->escapeHtml($user->getToken()) ?></th>
+            </tr>
         </table>
     </div>
 </div>

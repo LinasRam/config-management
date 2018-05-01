@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\PersistentCollection;
 use Exception;
 use User\Entity\Role;
+use User\Entity\User;
 use User\Service\RbacManager;
 
 class ConfigurationManager
@@ -69,22 +70,35 @@ class ConfigurationManager
 
     /**
      * @param ConfigurationGroup $configurationGroup
+     * @param User $user
      * @param array $configurations
      * @return array
+     * @throws Exception
      */
     public function getConfigurationsByRootGroupRecursively(
         ConfigurationGroup $configurationGroup,
+        User $user,
         array &$configurations = []
     ): array {
+        $permission = 'manage.' . $configurationGroup->getApplication()->getName() . '.'
+            . $configurationGroup->getEnvironment()->getName();
+        if (!$this->rbacManager->isGranted($user, $permission)) {
+            throw new Exception('Configuration not accessible');
+        }
+
         /** @var ConfigurationGroup $childGroup */
         foreach ($configurationGroup->getChildGroups() as $childGroup) {
             $configurations[$childGroup->getName()] = [];
-            $this->getConfigurationsByRootGroupRecursively($childGroup, $configurations[$childGroup->getName()]);
+            $this->getConfigurationsByRootGroupRecursively($childGroup, $user, $configurations[$childGroup->getName()]);
         }
 
         /** @var Configuration $configuration */
         foreach ($configurationGroup->getConfigurations() as $configuration) {
-            $configurations[$configuration->getKey()] = $configuration->getValue();
+            /** @var PersistentCollection $restrictedToRoles */
+            $restrictedToRoles = $configuration->getRestrictedToRoles();
+            if ($restrictedToRoles->isEmpty() || $this->rbacManager->hasRole($user, $restrictedToRoles)) {
+                $configurations[$configuration->getKey()] = $configuration->getValue();
+            }
         }
 
         return $configurations;

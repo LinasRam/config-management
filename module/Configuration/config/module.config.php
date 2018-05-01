@@ -97,7 +97,7 @@ return [
     'access_filter' => [
         'controllers' => [
             Controller\ApiController::class => [
-                ['actions' => ['configurations'], 'allow' => '@'],
+                ['actions' => ['configurations'], 'allow' => '*'],
             ],
             Controller\ApplicationController::class => [
                 ['actions' => ['index', 'view', 'add', 'edit', 'delete'], 'allow' => '+application.manage'],
@@ -119,6 +119,7 @@ return [
             Service\EnvironmentManager::class => Service\Factory\EnvironmentManagerFactory::class,
             Service\ConfigurationManager::class => Service\Factory\ConfigurationManagerFactory::class,
             Service\ConfigurationGroupManager::class => Service\Factory\ConfigurationGroupManagerFactory::class,
+            Service\FileGenerator::class => InvokableFactory::class,
         ],
     ],
     'view_manager' => [

@@ -75,6 +75,8 @@ class UserManager
         $currentDate = date('Y-m-d H:i:s');
         $user->setDateCreated($currentDate);
 
+        $user->setToken(uniqid());
+
         // Assign roles to user.
         $this->assignRoles($user, $data['roles']);
 
@@ -151,6 +153,7 @@ class UserManager
             $user->setPassword($passwordHash);
             $user->setStatus(User::STATUS_ACTIVE);
             $user->setDateCreated(date('Y-m-d H:i:s'));
+            $user->setToken(uniqid());
 
             // Assign user Administrator role
             $adminRole = $this->entityManager->getRepository(Role::class)
@@ -305,5 +308,14 @@ class UserManager
         $this->entityManager->flush();
 
         return true;
+    }
+
+    /**
+     * @param string $token
+     * @return User
+     */
+    public function getUserByToken(string $token): ?User
+    {
+        return $this->entityManager->getRepository(User::class)->findOneByToken($token);
     }
 }

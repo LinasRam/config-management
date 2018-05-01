@@ -54,6 +54,11 @@ class User
     protected $passwordResetToken;
 
     /**
+     * @ORM\Column(name="token")
+     */
+    protected $token;
+
+    /**
      * @ORM\Column(name="pwd_reset_token_creation_date", nullable=true)
      */
     protected $passwordResetTokenCreationDate;
@@ -243,6 +248,22 @@ class User
     public function setPasswordResetTokenCreationDate($date)
     {
         $this->passwordResetTokenCreationDate = $date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param mixed $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
     }
 
     /**

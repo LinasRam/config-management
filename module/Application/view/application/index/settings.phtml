@@ -30,6 +30,10 @@ $this->pageBreadcrumbs()->setItems([
                 <th>Date Created:</th>
                 <td><?= $this->escapeHtml($user->getDateCreated()) ?></th>
             </tr>
+            <tr>
+                <th>Token:</th>
+                <td><?= $this->escapeHtml($user->getToken()) ?></th>
+            </tr>
         </table>
     </div>
 </div>

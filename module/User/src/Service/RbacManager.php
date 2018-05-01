@@ -186,7 +186,15 @@ class RbacManager
             }
         }
 
+        /** @var Role $adminRole */
+        $adminRole = $this->entityManager->getRepository(Role::class)->find(1);
+
+        /** @var PersistentCollection $userRoles */
         $userRoles = $user->getRoles();
+
+        if ($userRoles->contains($adminRole)) {
+            return true;
+        }
 
         foreach ($userRoles as $userRole) {
             if ($roles->contains($userRole)) {

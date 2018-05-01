@@ -29,7 +29,7 @@ class ConfigurationGroupForm extends Form
                 'id' => 'name'
             ],
             'options' => [
-                'label' => 'name',
+                'label' => 'Name',
             ],
         ]);
 
