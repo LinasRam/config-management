@@ -54,9 +54,6 @@ $configurationGroupForm->prepare();
 <?= $this->flashMessenger()->render('success', ['alert', 'alert-success']); ?>
 <?= $this->flashMessenger()->render('info', ['alert', 'alert-info']); ?>
 
-<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addConfigGroup">
-    Add new group
-</button>
 <table class="table table-striped">
 
     <tr>
@@ -68,14 +65,15 @@ $configurationGroupForm->prepare();
     <?php /** @var \Configuration\Entity\ConfigurationGroup $childGroup */
     foreach ($configurationGroup->getChildGroups() as $childGroup): ?>
         <tr>
-            <td><strong><?= $this->escapeHtml($childGroup->getName()); ?></strong></td>
+            <td><strong><a class="config-group" href="<?= $this->url('configurations',
+                        ['action' => 'list', 'id' => $childGroup->getId()]); ?>">
+                        <i class="material-icons">folder</i>
+                        <?= $this->escapeHtml($childGroup->getName()); ?>
+                    </a></strong>
+            </td>
             <td></td>
             <td>
                 <nobr>
-                    <a class="btn btn-info" href="<?= $this->url('configurations',
-                        ['action' => 'list', 'id' => $childGroup->getId()]); ?>">
-                        Manage
-                    </a>
                     <button type="button" class="btn edit-config-group" data-toggle="modal" data-target="#editConfigGroup"
                             data-id="<?= $this->escapeHtml($childGroup->getId()); ?>"
                             data-name="<?= $this->escapeHtml($childGroup->getName()); ?>"
@@ -90,7 +88,12 @@ $configurationGroupForm->prepare();
     <?php /** @var \Configuration\Entity\Configuration $configuration */
     foreach ($configurations as $configuration): ?>
         <tr>
-            <td><?= $this->escapeHtml($configuration->getKey()); ?></td>
+            <td>
+                <span class="config-group">
+                    <i class="material-icons">settings</i>
+                    <?= $this->escapeHtml($configuration->getKey()); ?>
+                </span>
+            </td>
             <td><?= $this->escapeHtml($configuration->getValue()); ?></td>
             <td>
                 <button type="button" class="btn edit-config" data-toggle="modal" data-target="#editConfig"
@@ -109,7 +112,8 @@ $configurationGroupForm->prepare();
         <td></td>
         <td></td>
         <td>
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addConfig">Add new value
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addConfig">
+                <i class="material-icons">add</i>Add new value
             </button>
         </td>
     </tr>

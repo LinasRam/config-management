@@ -68,7 +68,7 @@ class ConfigurationController extends AbstractActionController
         $configurations = $this->configurationManager->getConfigurationsByGroup($configurationGroup);
 
         $title = $configurationGroup->getApplication()->getName()
-            . '/' . $configurationGroup->getEnvironment()->getName();
+            . ' ' . $configurationGroup->getEnvironment()->getName();
 
         $parentGroups = array_reverse(
             $this->configurationManager->getParentGroupsRecursively($configurationGroup),

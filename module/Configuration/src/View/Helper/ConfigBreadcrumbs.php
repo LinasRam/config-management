@@ -64,6 +64,8 @@ class ConfigBreadcrumbs extends AbstractHelper
             $itemNum++;
         }
 
+        $result .= '<a class="breadcrumb-item" href="#" data-toggle="modal" data-target="#addConfigGroup"><i class="material-icons">create_new_folder</i>Add new group</a>';
+
         $result .= '</ol>';
 
         return $result;

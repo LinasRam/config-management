@@ -53,10 +53,11 @@ $this->pageBreadcrumbs()->setItems([
                         ['action' => 'edit', 'id' => $environment->getId()]); ?>">
                         <span class="glyphicon glyphicon-pencil"></span> Edit
                     </a>
-                    <a class="btn btn-danger" href="<?= $this->url('environments',
-                        ['action' => 'delete', 'id' => $environment->getId()]); ?>">
-                        <span class="glyphicon glyphicon-remove"></span> Delete
-                    </a>
+                    <button type="button" class="btn btn-danger delete-record" data-toggle="modal" data-target="#deleteRecord"
+                            data-id="<?= $this->escapeHtml($environment->getId()); ?>"
+                    >
+                        Delete
+                    </button>
                 </nobr>
             </td>
         </tr>
@@ -65,4 +66,25 @@ $this->pageBreadcrumbs()->setItems([
 
 </table>
 
+<div id="deleteRecord" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Do you really want to delete this environment?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-danger delete-record-confirm">Yes</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    $('.delete-record').click(function () {
+        $('.delete-record-confirm').attr('href', '/environments/delete/' + $(this).data('id'))
+    });
+</script>

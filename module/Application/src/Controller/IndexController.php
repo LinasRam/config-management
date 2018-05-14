@@ -33,7 +33,11 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        if ($this->currentUser()) {
+            return new ViewModel();
+        } else {
+            return $this->redirect()->toRoute('login');
+        }
     }
 
     /**
