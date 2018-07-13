@@ -48,7 +48,7 @@ class ConfigurationForm extends Form
             'type' => 'multicheckbox',
             'name' => 'roles',
             'options' => [
-                'label' => 'Restrict to role(s)',
+                'label' => 'Allow only for role(s)',
                 'disable_inarray_validator' => true,
             ],
         ]);
